@@ -1,0 +1,725 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Olympiad">
+<meta name="theme-color" content="#4f46e5">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Olympiad Practice</title>
+<style>
+:root{
+  --bg:#f3f5fb; --card:#ffffff; --ink:#172033; --muted:#5b6680; --line:#e1e6f0; --soft:#eef1f8;
+  --brand:#4f46e5; --brand2:#7c3aed; --onbrand:#fff;
+  --ok:#0f9960; --okbg:#e3f6ec; --bad:#d93a44; --badbg:#fde9ea; --warn:#b97400; --warnbg:#fff3d9; --new:#5b6680; --newbg:#eef1f8;
+  --shadow:0 4px 18px rgba(23,32,51,.07);
+  --safe-b:env(safe-area-inset-bottom,0px); --safe-t:env(safe-area-inset-top,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1320; --card:#181d2d; --ink:#e8ecf6; --muted:#9aa5bf; --line:#2a3148; --soft:#20263a;
+    --brand:#7c79ff; --brand2:#a78bfa; --okbg:#123326; --ok:#3ccf8e; --badbg:#3a1a1f; --bad:#ff6b74; --warnbg:#3a2d10; --warn:#f2b441; --newbg:#232a40; --new:#9aa5bf;
+    --shadow:0 4px 18px rgba(0,0,0,.35);
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans Devanagari","Nirmala UI",sans-serif;-webkit-tap-highlight-color:transparent}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;touch-action:manipulation}
+h1,h2,h3{margin:0;line-height:1.25}
+.muted{color:var(--muted)} .small{font-size:.9rem} .center{text-align:center}
+/* header */
+.top{position:sticky;top:0;z-index:20;background:linear-gradient(120deg,var(--brand),var(--brand2));color:var(--onbrand);padding:calc(10px + var(--safe-t)) 20px 12px;display:flex;align-items:center;gap:14px}
+.top .logo{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.18);display:grid;place-items:center;font-size:26px;flex:none}
+.top h1{font-size:1.25rem}
+.top .sub{font-size:.85rem;opacity:.85}
+.top .grow{flex:1;min-width:0}
+.top select{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:12px;padding:9px 12px;min-height:44px;max-width:200px}
+.top select option{color:#172033}
+main{max-width:1120px;margin:0 auto;padding:20px 20px calc(100px + var(--safe-b))}
+/* tab bar */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--card);border-top:1px solid var(--line);display:flex;justify-content:center;padding-bottom:var(--safe-b)}
+.tabbar button{flex:1;max-width:180px;background:none;border:0;padding:8px 4px 10px;display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--muted);font-size:.8rem;font-weight:600;min-height:62px}
+.tabbar button .ic{font-size:1.45rem;line-height:1.1}
+.tabbar button.on{color:var(--brand)}
+/* cards & layout */
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:var(--shadow)}
+.stack>*+*{margin-top:18px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.between{justify-content:space-between}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+.grid.tiles{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.tile .v{font-size:2rem;font-weight:800;letter-spacing:-.02em}
+.tile .l{color:var(--muted);font-size:.9rem;font-weight:600}
+.section-title{font-size:1.3rem;margin:6px 0 2px}
+.subj{display:flex;flex-direction:column;gap:10px;text-align:left;border:1px solid var(--line);background:var(--card);border-radius:20px;padding:18px;box-shadow:var(--shadow);min-height:150px;position:relative;overflow:hidden}
+.subj::before{content:"";position:absolute;inset:0 0 auto 0;height:5px;background:var(--c)}
+.subj .ic{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;font-size:28px;font-weight:800;background:var(--soft);background:color-mix(in srgb,var(--c) 15%,transparent);color:var(--c)}
+.subj .nm{font-size:1.15rem;font-weight:800}
+.subj .meta{font-size:.88rem;color:var(--muted)}
+.bar{height:10px;border-radius:99px;background:var(--soft);overflow:hidden}
+.bar>span{display:block;height:100%;border-radius:99px;background:var(--c,var(--brand))}
+.btn{border:0;border-radius:14px;padding:12px 18px;min-height:48px;font-weight:700;background:var(--brand);color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn.ghost{background:var(--soft);color:var(--ink)}
+.btn.line{background:transparent;border:1.5px solid var(--line);color:var(--ink)}
+.btn.danger{background:var(--badbg);color:var(--bad)}
+.btn.big{min-height:60px;font-size:1.08rem;padding:14px 22px}
+.btn:disabled{opacity:.45}
+.mode{display:flex;gap:14px;align-items:flex-start;text-align:left;border:1.5px solid var(--line);background:var(--card);border-radius:18px;padding:16px;min-height:96px}
+.mode .ic{font-size:30px;flex:none}
+.mode b{display:block;font-size:1.05rem}
+.mode span{color:var(--muted);font-size:.9rem}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{border:1.5px solid var(--line);background:var(--card);border-radius:99px;padding:9px 16px;min-height:44px;font-weight:600;font-size:.95rem}
+.chip.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.pill{display:inline-block;border-radius:99px;padding:3px 11px;font-size:.8rem;font-weight:700;white-space:nowrap}
+.pill.weak{background:var(--badbg);color:var(--bad)} .pill.improving{background:var(--warnbg);color:var(--warn)}
+.pill.strong{background:var(--okbg);color:var(--ok)} .pill.new{background:var(--newbg);color:var(--new)}
+.pill.pass{background:var(--okbg);color:var(--ok)} .pill.fail{background:var(--badbg);color:var(--bad)}
+.topic-row{display:grid;grid-template-columns:minmax(150px,1.1fr) 2fr auto;gap:14px;align-items:center;padding:14px 0;border-top:1px solid var(--line)}
+.topic-row:first-child{border-top:0}
+.topic-row .tip{grid-column:1/-1;font-size:.92rem;color:var(--muted);background:var(--soft);border-radius:12px;padding:10px 12px;margin-top:-4px}
+.list-item{display:flex;gap:14px;align-items:center;padding:14px 0;border-top:1px solid var(--line)}
+.list-item:first-child{border-top:0}
+.list-item .grow{flex:1;min-width:0}
+.notice{border-radius:16px;padding:14px 16px;background:var(--warnbg);color:var(--ink);border:1px solid color-mix(in srgb,var(--warn) 30%,transparent)}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:.85rem;font-weight:700;color:var(--muted)}
+.field input,.field select,textarea{border:1.5px solid var(--line);background:var(--card);border-radius:12px;padding:10px 12px;min-height:46px;width:100%}
+.form-grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+/* quiz */
+.quiz{max-width:960px;margin:0 auto}
+.qhead{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.timer{font-variant-numeric:tabular-nums;font-weight:800;font-size:1.2rem;background:var(--soft);padding:8px 14px;border-radius:12px}
+.timer.low{background:var(--badbg);color:var(--bad)}
+.qtext{font-size:1.35rem;font-weight:650;line-height:1.5;margin:6px 0 4px}
+.qtopic{font-size:.85rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.opts{display:grid;gap:12px;margin-top:16px}
+@media (min-width:1000px){.opts.two{grid-template-columns:1fr 1fr}}
+.opt{display:flex;align-items:center;gap:14px;text-align:left;width:100%;min-height:66px;padding:14px 18px;border:2px solid var(--line);background:var(--card);border-radius:16px;font-size:1.15rem;font-weight:550}
+.opt .k{flex:none;width:38px;height:38px;border-radius:11px;background:var(--soft);display:grid;place-items:center;font-weight:800;font-size:1rem}
+.opt.sel{border-color:var(--brand);background:color-mix(in srgb,var(--brand) 9%,var(--card))}
+.opt.sel .k{background:var(--brand);color:#fff}
+.opt.right{border-color:var(--ok);background:var(--okbg)} .opt.right .k{background:var(--ok);color:#fff}
+.opt.wrong{border-color:var(--bad);background:var(--badbg)} .opt.wrong .k{background:var(--bad);color:#fff}
+.explain{margin-top:16px;border-radius:16px;padding:14px 16px;background:var(--soft);font-size:1rem}
+.explain b{display:block;margin-bottom:2px}
+.palette{display:grid;grid-template-columns:repeat(auto-fill,minmax(46px,1fr));gap:8px}
+.palette button{min-height:46px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);font-weight:700}
+.palette button.done{background:color-mix(in srgb,var(--brand) 14%,var(--card));border-color:var(--brand)}
+.palette button.cur{outline:3px solid var(--brand);outline-offset:1px}
+.palette button.right{background:var(--okbg);border-color:var(--ok)} .palette button.wrong{background:var(--badbg);border-color:var(--bad)}
+.qnav{display:flex;gap:12px;margin-top:20px}
+.qnav .btn{flex:1}
+.score-ring{width:150px;height:150px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--c) calc(var(--p)*1%),var(--soft) 0);margin:0 auto}
+.score-ring>div{width:118px;height:118px;border-radius:50%;background:var(--card);display:grid;place-items:center;font-size:2rem;font-weight:800}
+.review-q{padding:16px 0;border-top:1px solid var(--line)}
+.review-q:first-child{border-top:0}
+.ans{margin-top:6px;font-size:.98rem}
+.ans .r{color:var(--ok);font-weight:700} .ans .w{color:var(--bad);font-weight:700}
+/* certificate */
+.cert{max-width:900px;margin:0 auto;background:#fffdf6;color:#1d2433;border:10px double #c69a2b;border-radius:18px;padding:44px 36px;text-align:center}
+.cert .kick{letter-spacing:.2em;text-transform:uppercase;font-size:.8rem;font-weight:800;color:#8a6200}
+.cert h2{font-size:2.3rem;margin:10px 0;font-family:Georgia,"Times New Roman",serif}
+.cert .name{font-size:2.4rem;font-weight:800;color:#3730a3;border-bottom:2px solid #d9cfa8;display:inline-block;padding:4px 30px 8px;margin:14px 0;font-family:Georgia,serif}
+.cert .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:22px}
+.cert .grid3 div{background:#f6efd8;border-radius:12px;padding:10px}
+.cert .grid3 span{display:block;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:#7a6a3a;font-weight:800}
+@media (max-width:700px){.topic-row{grid-template-columns:1fr auto}.topic-row .bar-wrap{grid-column:1/-1;order:3}.cert .grid3{grid-template-columns:1fr}}
+@media print{
+  .top,.tabbar,.no-print{display:none!important}
+  body{background:#fff} main{padding:0;max-width:none}
+  .card{box-shadow:none;break-inside:avoid}
+  .cert{border-width:8px;margin-top:20mm}
+}
+</style>
+</head>
+<body>
+<header class="top no-print" id="top"></header>
+<main id="main"></main>
+<nav class="tabbar no-print" id="tabbar"></nav>
+
+<script src="questions-grade6.js"></script>
+<script>
+"use strict";
+/* ============================== CONFIG ============================== */
+const GRADES = [6]; // add 7 here after adding questions-grade7.js
+const SUBJECTS = [
+  {id:"math",name:"Math",icon:"➗",c:"#4f6bff"},
+  {id:"science",name:"Science",icon:"🔬",c:"#14a37f"},
+  {id:"english",name:"English",icon:"📖",c:"#e0702a"},
+  {id:"gk",name:"General Knowledge",icon:"🌍",c:"#0b9ec0"},
+  {id:"hindi",name:"हिंदी",icon:"अ",c:"#d63f6c",lang:"hi-IN"},
+  {id:"computers",name:"Computers",icon:"💻",c:"#7c4dff"},
+  {id:"reasoning",name:"Logical Reasoning",icon:"🧩",c:"#c08a00"}
+];
+const TIPS = {
+  "Number System":"Revise place value (Indian & International), Roman numerals and estimation. Do 5 'build the smallest/largest number' questions daily.",
+  "Factors & Multiples":"Memorise divisibility rules (2,3,4,5,6,8,9,10,11) and primes up to 50. Practise HCF/LCM by prime factorisation.",
+  "Fractions & Decimals":"Always convert to a common denominator before adding. Line up decimal points. Compare decimals by adding zeros (0.5 = 0.500).",
+  "Integers":"Use a number line. Rule: subtracting a negative = adding. Two negatives added stay negative.",
+  "Algebra":"Practise 'undo' steps: to solve 3x + 4 = 19, subtract 4 then divide by 3. Translate word statements into expressions.",
+  "Ratio & Proportion":"Always simplify ratios with HCF. Use the unitary method: find the value of ONE first, then multiply.",
+  "Geometry":"Learn angle facts (90°, 180°, 360°), types of triangles, symmetry, and faces/edges/vertices of 3-D shapes. Draw a quick figure for every question.",
+  "Mensuration":"Know: Perimeter of rectangle = 2(l+b), Area = l×b, square: 4s and s². Always write units.",
+  "Data Handling":"Practise mean, mode, range and reading pictographs/bar graphs. Count carefully from the key/scale.",
+  "Mental Math":"Learn tables to 20, squares to 25, and tricks like ×25 = ×100÷4, ×5 = ×10÷2. Do a 5-minute speed drill daily.",
+  "Food & Health":"Make a chart: nutrient → source → deficiency disease. Revise food tests (iodine, CuSO₄, paper test).",
+  "Materials & Separation":"Link each method to its use: handpicking, winnowing, sieving, sedimentation, filtration, evaporation. Revise transparent/translucent/opaque.",
+  "Changes Around Us":"Sort examples into reversible vs irreversible changes. Remember expansion/contraction examples.",
+  "Plants":"Label diagrams of leaf, root and flower. Learn tap vs fibrous roots, venation, photosynthesis, transpiration.",
+  "Body & Movement":"Learn joint types with one example each and how animals (earthworm, snail, fish, birds) move.",
+  "Living Things":"Study adaptations by habitat: desert, polar, aquatic, grassland. Ask 'why does this feature help?'.",
+  "Motion & Measurement":"Revise types of motion with examples and SI units/conversions (mm, cm, m, km).",
+  "Light":"Practise luminous/non-luminous, shadows, pinhole camera and mirror images with small activities at home.",
+  "Electricity & Magnets":"Revise conductors vs insulators, circuits, magnet poles and properties. Draw a simple circuit.",
+  "Air & Water":"Know air composition (78% N₂, 21% O₂) and the water cycle steps: evaporation → condensation → precipitation.",
+  "Vocabulary":"Learn 10 new words a day with synonym and antonym. Read a short story daily and note new words.",
+  "Grammar":"Revise parts of speech with 3 examples each. Practise subject–verb agreement, degrees of comparison and plurals.",
+  "Verbs & Tenses":"Make a table of 30 irregular verbs (go-went-gone). Practise identifying the tense from time words (already, yesterday, now).",
+  "Articles & Prepositions":"Remember 'an' goes by vowel SOUND (an hour, a university). Practise in/on/at with time and place.",
+  "Idioms":"Learn 5 idioms a week and use each in your own sentence.",
+  "Spelling":"Write tricky words 3 times, break them into syllables, and do a weekly dictation of 15 words.",
+  "Sentence Transformation":"Practise active↔passive and direct↔indirect speech with simple sentences first; check tense changes.",
+  "Comprehension":"Read the question FIRST, then the passage. Underline key words and find the exact line that answers.",
+  "India":"Revise national symbols, states & capitals, rivers and famous monuments with a map.",
+  "World":"Revise continents, oceans, capitals and currencies of major countries, with a world map.",
+  "Space & Science":"Learn the planets in order with one fact each and India's space missions (Chandrayaan, Aditya-L1, Gaganyaan).",
+  "History & People":"Make flash cards: famous Indian personalities → what they are known for.",
+  "Sports":"Learn team sizes, sport terms and recent major events/winners. Read the sports page once a week.",
+  "Inventions":"Make an inventor → invention table and revise it weekly.",
+  "पर्यायवाची":"रोज़ 5 शब्दों के 3-3 पर्यायवाची लिखें और याद करें।",
+  "विलोम":"विलोम शब्दों की सूची बनाकर रोज़ 10 शब्द दोहराएँ।",
+  "लिंग और वचन":"लिंग और वचन बदलने के नियम (आ→ए, ई→इयाँ) एक तालिका में लिखें और अभ्यास करें।",
+  "संज्ञा और सर्वनाम":"संज्ञा के भेद (व्यक्तिवाचक, जातिवाचक, भाववाचक) और सर्वनाम के भेद उदाहरण सहित दोहराएँ।",
+  "विशेषण और क्रिया":"हर वाक्य में पहले क्रिया, फिर संज्ञा और उसका विशेषण ढूँढने का अभ्यास करें।",
+  "मुहावरे":"हर सप्ताह 5 मुहावरे अर्थ और वाक्य-प्रयोग सहित याद करें।",
+  "वर्तनी":"कठिन शब्दों का श्रुतलेख (dictation) करें; मात्राओं (ि/ी, ु/ू) पर ध्यान दें।",
+  "शब्द रचना":"संधि, उपसर्ग और प्रत्यय के 10-10 उदाहरण लिखें; अनेक शब्दों के लिए एक शब्द दोहराएँ।",
+  "Hardware":"Sort devices into input, output, storage and processing. Label the parts of a computer.",
+  "Memory & Storage":"Memorise: 8 bits = 1 byte, 1024 B = 1 KB … TB. Know RAM vs ROM.",
+  "Software & OS":"Know examples of system vs application software, browsers, and computer pioneers.",
+  "Shortcuts & Keys":"Practise Ctrl + C/V/X/Z/Y/S/P/A on a real computer — doing helps remembering.",
+  "MS Office":"Learn what Word, Excel and PowerPoint do, file extensions and cell addresses. Try a simple Excel formula.",
+  "Internet & Safety":"Learn full forms (URL, WWW, HTTP) and online safety rules: strong passwords, no sharing personal info, beware phishing.",
+  "Coding & Numbers":"Practise decimal↔binary for 0–31 and write small Scratch programs with loops.",
+  "Series":"Find the pattern: check differences, ratios, squares/cubes, or letter positions (A=1 … Z=26).",
+  "Coding-Decoding":"Write A–Z with numbers 1–26 on rough paper and check the shift for each letter.",
+  "Analogy":"Say the relation in words first (\"X is used for Y\"), then apply it to the second pair.",
+  "Odd One Out":"Look for the property shared by most items: category, multiple, shape, type.",
+  "Directions":"Always draw a quick N-E-S-W sketch. Remember: right turn from North = East.",
+  "Blood Relations":"Draw a family tree with + (male) and − (female). Work from the end of the sentence backwards.",
+  "Ranking & Order":"Total = left rank + right rank − 1. Draw a line diagram for comparisons.",
+  "Calendar & Clock":"Use 'odd days' (days ÷ 7 remainder). Each hour on a clock = 30°.",
+  "Math Operations":"Substitute the symbols carefully FIRST, then apply BODMAS."
+};
+
+/* ============================== UTILITIES ============================== */
+const APP_KEY = "olympiad.data.v1", ACTIVE_KEY = "olympiad.active.v1";
+const $ = s => document.querySelector(s);
+const h = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const R = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const pick = a => a[R(0, a.length - 1)];
+const gcd = (a, b) => b ? gcd(b, a % b) : Math.abs(a);
+const fmt = n => Number(n).toLocaleString("en-IN");
+const neg = n => n < 0 ? "−" + Math.abs(n) : String(n);
+const uid = p => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const subjOf = id => SUBJECTS.find(s => s.id === id);
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function hash(str) { let x = 2166136261; for (let i = 0; i < str.length; i++) { x ^= str.charCodeAt(i); x = Math.imul(x, 16777619); } return (x >>> 0).toString(36); }
+function fmtTime(s) { s = Math.max(0, Math.round(s)); const m = Math.floor(s / 60); return `${m}:${String(s % 60).padStart(2, "0")}`; }
+function fmtDate(iso) { try { return new Date(iso).toLocaleString("en-IN", {day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}); } catch (e) { return iso; } }
+function dayKey(d) { d = new Date(d); return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate(); }
+
+/* ============================== DATA ============================== */
+function defaultData() {
+  return { version: 1,
+    settings: { practiceCount: 10, examCount: 25, examMinutes: 30, passPct: 60, distinctionPct: 85, autoRead: false },
+    profiles: [{ id: "p1", name: "My Child", grade: 6 }], activeProfile: "p1", progress: {}, attempts: [] };
+}
+function loadData() {
+  try { const raw = localStorage.getItem(APP_KEY); if (raw) { const d = JSON.parse(raw); const def = defaultData(); d.settings = Object.assign(def.settings, d.settings || {}); d.progress = d.progress || {}; d.attempts = d.attempts || []; if (!d.profiles || !d.profiles.length) { d.profiles = def.profiles; d.activeProfile = "p1"; } return d; } } catch (e) {}
+  return defaultData();
+}
+function save() { try { localStorage.setItem(APP_KEY, JSON.stringify(S.data)); } catch (e) { alert("Could not save progress on this device (storage full or blocked). Please download a backup from Settings."); } }
+function saveActive() { try { if (S.quiz && !S.quiz.done) localStorage.setItem(ACTIVE_KEY, JSON.stringify(S.quiz)); else localStorage.removeItem(ACTIVE_KEY); } catch (e) {} }
+function profile() { return S.data.profiles.find(p => p.id === S.data.activeProfile) || S.data.profiles[0]; }
+function grade() { return profile().grade || 6; }
+function prog(subj, pid = profile().id, g = grade()) {
+  const P = S.data.progress; P[pid] = P[pid] || {}; P[pid][g] = P[pid][g] || {};
+  return P[pid][g][subj] = P[pid][g][subj] || { topics: {}, seen: {}, wrong: {} };
+}
+
+/* ============================== QUESTION BANK ============================== */
+const _bankCache = {};
+function bankFor(subj, g = grade()) {
+  const key = g + subj; if (_bankCache[key]) return _bankCache[key];
+  const raw = ((window.QB || {})[g] || {})[subj] || [];
+  return _bankCache[key] = raw.map(r => ({ id: `${g}-${subj}-${hash(r[1] + "|" + r[2][0])}`, t: r[0], q: r[1], opts: r[2], e: r[3] }));
+}
+function topicsFor(subj) {
+  const list = []; bankFor(subj).forEach(q => { if (!list.includes(q.t)) list.push(q.t); });
+  (GEN[subj] || []).forEach(g => { if (!list.includes(g.t)) list.push(g.t); });
+  return list;
+}
+function prepare(item) {
+  const correct = item.opts[0]; const o = shuffle(item.opts);
+  return { id: item.id, t: item.t, q: item.q, o, a: o.indexOf(correct), e: item.e, gen: !!item.gen };
+}
+
+/* ---------- auto-generated questions (unlimited practice) ---------- */
+const DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const GEN = {
+  math: [
+    { t: "Mental Math", f: () => { const a = R(12, 99), b = R(3, 9), p = a * b; return { q: `${a} × ${b} = ?`, c: fmt(p), d: [p + b, p - b, p + 10, p - 10, p + 1].map(fmt), e: `(${a - a % 10} × ${b}) + (${a % 10} × ${b}) = ${(a - a % 10) * b} + ${(a % 10) * b} = ${p}.` }; } },
+    { t: "Mental Math", f: () => { const a = R(120, 899), b = R(105, 699); return { q: `${a} + ${b} = ?`, c: a + b, d: [a + b + 10, a + b - 10, a + b + 100, a + b - 1, a + b + 1], e: `Add hundreds, tens and ones separately: ${a} + ${b} = ${a + b}.` }; } },
+    { t: "Factors & Multiples", f: () => { const g = R(2, 12); let x, y; do { x = R(2, 9); y = R(2, 9); } while (x === y || gcd(x, y) !== 1); const a = g * x, b = g * y; return { q: `What is the HCF of ${a} and ${b}?`, c: g, d: [g * 2, g + 1, Math.max(1, g - 1), g * x, 1, g * 3], e: `${a} = ${g} × ${x} and ${b} = ${g} × ${y}. ${x} and ${y} have no common factor, so HCF = ${g}.` }; } },
+    { t: "Factors & Multiples", f: () => { let x, y; do { x = R(4, 15); y = R(4, 15); } while (x === y); const l = x * y / gcd(x, y); return { q: `What is the LCM of ${x} and ${y}?`, c: l, d: [x * y, l * 2, gcd(x, y), l + x, l - y, l + 1].filter(v => v > 0), e: `LCM = (${x} × ${y}) ÷ HCF(${gcd(x, y)}) = ${l}.` }; } },
+    { t: "Fractions & Decimals", f: () => { const q = pick([2, 3, 4, 5, 6, 8, 10]); let p; do { p = R(1, q - 1); } while (gcd(p, q) !== 1); const n = q * R(2, 12), ans = p * n / q; return { q: `What is ${p}/${q} of ${n}?`, c: ans, d: [n / q, ans + n / q, n - ans, ans * 2, ans + 1].filter(v => v > 0 && v !== ans), e: `${n} ÷ ${q} = ${n / q}, then × ${p} = ${ans}.` }; } },
+    { t: "Fractions & Decimals", f: () => { const a = R(11, 99) / 10, b = R(101, 999) / 100, s = +(a + b).toFixed(2); return { q: `${a.toFixed(1)} + ${b.toFixed(2)} = ?`, c: s.toFixed(2), d: [(s + 0.1).toFixed(2), (s - 0.1).toFixed(2), (s + 1).toFixed(2), (a * 10 + b).toFixed(2), (s - 1).toFixed(2)], e: `Line up the decimal points: ${a.toFixed(2)} + ${b.toFixed(2)} = ${s.toFixed(2)}.` }; } },
+    { t: "Integers", f: () => { const a = R(-20, 20), b = R(-20, -1), c = R(1, 15), ans = a + b - c; return { q: `${neg(a)} + (${neg(b)}) − ${c} = ?`, c: neg(ans), d: [ans + 2 * c, a - b - c, -ans, ans + 1, ans - 1].filter(v => v !== ans).map(neg), e: `${neg(a)} + (${neg(b)}) = ${neg(a + b)}; then ${neg(a + b)} − ${c} = ${neg(ans)}.` }; } },
+    { t: "Algebra", f: () => { const x = R(2, 15), a = R(2, 9), b = R(1, 20), c = a * x + b; return { q: `If ${a}x + ${b} = ${c}, find x.`, c: x, d: [x + 1, x - 1, x + 2, c - b, Math.round(c / a)].filter(v => v !== x && v > 0), e: `${a}x = ${c} − ${b} = ${c - b}, so x = ${c - b} ÷ ${a} = ${x}.` }; } },
+    { t: "Mensuration", f: () => { const l = R(5, 20), b = R(2, l - 1), area = Math.random() < .5; return area ? { q: `Find the area of a rectangle ${l} cm long and ${b} cm wide.`, c: `${l * b} cm²`, d: [`${2 * (l + b)} cm²`, `${l * b + l} cm²`, `${l + b} cm²`, `${l * b - b} cm²`], e: `Area = l × b = ${l} × ${b} = ${l * b} cm².` } : { q: `Find the perimeter of a rectangle ${l} cm long and ${b} cm wide.`, c: `${2 * (l + b)} cm`, d: [`${l * b} cm`, `${l + b} cm`, `${2 * l + b} cm`, `${2 * (l + b) + 2} cm`], e: `Perimeter = 2(l + b) = 2(${l} + ${b}) = ${2 * (l + b)} cm.` }; } },
+    { t: "Ratio & Proportion", f: () => { const k = R(3, 9), u = R(5, 40); let m; do { m = R(2, 15); } while (m === k); return { q: `${k} notebooks cost ₹${k * u}. What is the cost of ${m} notebooks?`, c: `₹${m * u}`, d: [`₹${m * u + u}`, `₹${m * u - u}`, `₹${k * u + m}`, `₹${m * k}`, `₹${(m + 1) * u + 5}`], e: `Cost of 1 = ${k * u} ÷ ${k} = ₹${u}. Cost of ${m} = ${m} × ${u} = ₹${m * u}.` }; } }
+  ],
+  reasoning: [
+    { t: "Series", f: () => { const s = R(2, 30), d = R(3, 12), t = [0, 1, 2, 3, 4].map(i => s + i * d), n = s + 5 * d; return { q: `Find the next number: ${t.join(", ")}, ?`, c: n, d: [n + 1, n - 1, n + d, n - d, n + 2], e: `Add ${d} each time: ${t[4]} + ${d} = ${n}.` }; } },
+    { t: "Series", f: () => { const s = R(1, 5), r = R(2, 3), t = [0, 1, 2, 3].map(i => s * r ** i), n = s * r ** 4; return { q: `Find the next number: ${t.join(", ")}, ?`, c: n, d: [n + t[3], n - r, t[3] + (t[3] - t[2]), n * r, n + 1], e: `Multiply by ${r} each time: ${t[3]} × ${r} = ${n}.` }; } },
+    { t: "Series", f: () => { const st = R(0, 8), sp = R(2, 4), L = i => String.fromCharCode(65 + i), t = [0, 1, 2, 3].map(i => L(st + i * sp)), n = st + 4 * sp; return { q: `Find the next letter: ${t.join(", ")}, ?`, c: L(n), d: [L(n + 1), L(n - 1), L(n + 2), L(n - 2)], e: `Each letter moves ${sp} places forward, so after ${t[3]} comes ${L(n)}.` }; } },
+    { t: "Calendar & Clock", f: () => { const d0 = R(0, 6), n = R(8, 60), ans = DAYS[(d0 + n) % 7]; return { q: `If today is ${DAYS[d0]}, what day will it be after ${n} days?`, c: ans, d: [DAYS[(d0 + n + 1) % 7], DAYS[(d0 + n + 6) % 7], DAYS[(d0 + n + 2) % 7], DAYS[(d0 + n + 5) % 7]], e: `${n} ÷ 7 leaves remainder ${n % 7}. ${DAYS[d0]} + ${n % 7} day(s) = ${ans}.` }; } },
+    { t: "Calendar & Clock", f: () => { const hh = R(1, 11), a = Math.min(30 * hh, 360 - 30 * hh); return { q: `What is the smaller angle between the clock hands at ${hh} o'clock?`, c: `${a}°`, d: [`${a + 30}°`, `${Math.abs(a - 30) || 15}°`, `${360 - a}°`, `${a + 15}°`, `${a + 60}°`], e: `Each hour gap = 30°. ${hh} × 30° = ${30 * hh}°${30 * hh > 180 ? `; smaller angle = 360° − ${30 * hh}° = ${a}°` : ""}.` }; } },
+    { t: "Coding-Decoding", f: () => { const W = ["SUN","MAP","BOX","CUP","PEN","HAT","DOG","FAN","JAR","KITE","LAMP","BELL","NEST","FROG"]; const k = R(1, 3); let w1 = pick(W), w2; do { w2 = pick(W); } while (w2 === w1); const enc = (w, s) => w.split("").map(c => String.fromCharCode((c.charCodeAt(0) - 65 + s + 26) % 26 + 65)).join(""); return { q: `If ${w1} is written as ${enc(w1, k)}, how is ${w2} written?`, c: enc(w2, k), d: [enc(w2, k + 1), enc(w2, -k), enc(w2, k - 1 || 4), enc(w2, k + 2)], e: `Each letter moves ${k} place(s) forward in the alphabet.` }; } }
+  ]
+};
+function makeGen(subj, topics) {
+  const gens = (GEN[subj] || []).filter(g => !topics || !topics.length || topics.includes(g.t));
+  if (!gens.length) return null;
+  const g = pick(gens), x = g.f(), c = String(x.c), d = [];
+  for (const v of x.d) { const s = String(v); if (s !== c && !d.includes(s) && s !== "NaN") d.push(s); if (d.length === 3) break; }
+  let k = 1; const base = parseFloat(c.replace(/[^\d.\-]/g, ""));
+  while (d.length < 3) { const s = isNaN(base) ? c + k : String(base + k * 7); if (!d.includes(s) && s !== c) d.push(s); k++; }
+  return { id: "gen-" + uid(""), t: g.t, q: x.q, opts: [c, ...d], e: x.e, gen: true };
+}
+
+/* ============================== WEAKNESS ANALYSIS ============================== */
+function topicStatus(ts) {
+  if (!ts || !ts.r || ts.r.length < 3) return { s: "new", label: "Not enough data", acc: ts && ts.r && ts.r.length ? Math.round(100 * ts.r.reduce((a, b) => a + b, 0) / ts.r.length) : null };
+  const acc = Math.round(100 * ts.r.reduce((a, b) => a + b, 0) / ts.r.length);
+  return { s: acc < 50 ? "weak" : acc < 75 ? "improving" : "strong", label: acc < 50 ? "Needs work" : acc < 75 ? "Improving" : "Strong", acc };
+}
+function analyse(subj) {
+  const p = prog(subj);
+  const rows = topicsFor(subj).map(t => { const ts = p.topics[t]; const st = topicStatus(ts); return { t, a: ts ? ts.a : 0, c: ts ? ts.c : 0, n: ts && ts.r ? ts.r.length : 0, ...st }; });
+  const order = { weak: 0, improving: 1, new: 2, strong: 3 };
+  rows.sort((x, y) => order[x.s] - order[y.s] || (x.acc ?? 101) - (y.acc ?? 101));
+  const totA = rows.reduce((s, r) => s + r.a, 0), totC = rows.reduce((s, r) => s + r.c, 0);
+  return { rows, answered: totA, acc: totA ? Math.round(100 * totC / totA) : null, weak: rows.filter(r => r.s === "weak"), improving: rows.filter(r => r.s === "improving"), strong: rows.filter(r => r.s === "strong"), untried: rows.filter(r => r.s === "new") };
+}
+function coachSummary(subj, A) {
+  if (!A.answered) return "No practice yet. Start with a 10-question practice to discover strengths and weak areas.";
+  const parts = [];
+  if (A.weak.length) parts.push(`Focus first on <b>${A.weak.slice(0, 3).map(r => `${h(r.t)} (${r.acc}%)`).join(", ")}</b>.`);
+  if (A.improving.length) parts.push(`Keep practising <b>${A.improving.slice(0, 3).map(r => h(r.t)).join(", ")}</b> to reach 75%+.`);
+  if (A.strong.length) parts.push(`Strong in <b>${A.strong.slice(0, 3).map(r => h(r.t)).join(", ")}</b> 👏.`);
+  if (A.untried.length) parts.push(`Not tried enough yet: ${A.untried.slice(0, 4).map(r => h(r.t)).join(", ")}${A.untried.length > 4 ? "…" : ""}.`);
+  return parts.join(" ");
+}
+
+/* ============================== STATE ============================== */
+const S = { data: loadData(), tab: "home", subj: null, topicSel: [], quiz: null, screen: "tabs", result: null, weakSubj: "math", histFilter: "all", reviewOnlyWrong: false, timer: null, pending: null };
+try { const a = localStorage.getItem(ACTIVE_KEY); if (a) S.pending = JSON.parse(a); } catch (e) {}
+
+/* ============================== QUIZ ENGINE ============================== */
+const MODE_LABEL = { practice: "Practice", exam: "Mock Exam", weak: "Weak-area drill", mistakes: "Fix my mistakes" };
+function buildQuestions(subj, mode, topics) {
+  const set = S.data.settings, p = prog(subj);
+  const count = mode === "exam" ? +set.examCount : +set.practiceCount;
+  let bank = bankFor(subj);
+  if (mode === "weak") {
+    const A = analyse(subj); let wt = [...A.weak, ...A.improving].map(r => r.t);
+    if (!wt.length) wt = A.untried.map(r => r.t);
+    if (!wt.length) wt = A.rows.slice(0, 3).map(r => r.t);
+    topics = wt;
+  }
+  if (mode === "mistakes") bank = bank.filter(q => p.wrong[q.id]);
+  else if (topics && topics.length) bank = bank.filter(q => topics.includes(q.t));
+  // least-seen first so the child sees new questions before repeats
+  const ordered = shuffle(bank).sort((a, b) => (p.seen[a.id] || 0) - (p.seen[b.id] || 0));
+  const hasGen = mode !== "mistakes" && (GEN[subj] || []).some(g => !topics || !topics.length || topics.includes(g.t));
+  let nGen = hasGen ? Math.max(count - ordered.length, Math.round(count * 0.3)) : 0;
+  nGen = Math.min(nGen, count);
+  const items = ordered.slice(0, count - nGen);
+  for (let i = 0; i < nGen; i++) { const g = makeGen(subj, topics); if (g) items.push(g); }
+  return shuffle(items).map(prepare);
+}
+function startQuiz(subj, mode, topics) {
+  const qs = buildQuestions(subj, mode, topics);
+  if (!qs.length) { alert(mode === "mistakes" ? "No saved mistakes in this subject. Great job! 🎉" : "No questions available for this selection."); return; }
+  const set = S.data.settings;
+  S.quiz = { id: uid("q"), pid: profile().id, grade: grade(), subj, mode, topics: topics || [], qs, ans: qs.map(() => null), i: 0, started: Date.now(),
+    ends: mode === "exam" ? Date.now() + set.examMinutes * 60000 : null, done: false };
+  S.pending = null; S.screen = "quiz"; saveActive(); startTimer(); render(); window.scrollTo(0, 0);
+  if (set.autoRead) speakQ();
+}
+function resumeQuiz() {
+  const q = S.pending; if (!q) return;
+  if (q.pid !== profile().id) { S.data.activeProfile = q.pid; save(); }
+  S.quiz = q; S.pending = null; S.screen = "quiz";
+  if (q.mode === "exam" && q.ends && Date.now() > q.ends) { finishQuiz(true); return; }
+  startTimer(); render();
+}
+function startTimer() {
+  clearInterval(S.timer);
+  if (!S.quiz || !S.quiz.ends) return;
+  S.timer = setInterval(() => {
+    const left = (S.quiz.ends - Date.now()) / 1000, el = $("#timer");
+    if (el) { el.textContent = "⏱ " + fmtTime(left); el.classList.toggle("low", left < 120); }
+    if (left <= 0) finishQuiz(true);
+  }, 1000);
+}
+function choose(k) {
+  const Q = S.quiz; if (!Q || Q.done) return;
+  const instant = Q.mode !== "exam";
+  if (instant && Q.ans[Q.i] !== null) return; // locked after first tap in practice
+  Q.ans[Q.i] = k; saveActive(); render();
+}
+function go(i) { const Q = S.quiz; Q.i = Math.max(0, Math.min(Q.qs.length - 1, i)); saveActive(); render(); window.scrollTo(0, 0); if (S.data.settings.autoRead) speakQ(); }
+function finishQuiz(auto) {
+  const Q = S.quiz; if (!Q || Q.done) return;
+  const unanswered = Q.ans.filter(a => a === null).length;
+  if (!auto && Q.mode === "exam" && unanswered && !confirm(`${unanswered} question(s) not answered. Submit anyway?`)) return;
+  if (!auto && Q.mode !== "exam" && unanswered && !confirm(`End now? ${unanswered} unanswered question(s) will not be counted.`)) return;
+  clearInterval(S.timer); Q.done = true;
+  const set = S.data.settings, p = prog(Q.subj, Q.pid, Q.grade);
+  let right = 0, wrong = 0, skipped = 0; const now = Date.now();
+  const items = Q.qs.map((q, i) => {
+    const ch = Q.ans[i];
+    if (ch === null) { skipped++; return { ...q, ch }; }
+    const ok = ch === q.a; ok ? right++ : wrong++;
+    const ts = p.topics[q.t] = p.topics[q.t] || { a: 0, c: 0, r: [] };
+    ts.a++; if (ok) ts.c++; ts.r.push(ok ? 1 : 0); if (ts.r.length > 20) ts.r.shift();
+    if (!q.gen) { p.seen[q.id] = (p.seen[q.id] || 0) + 1; if (ok) delete p.wrong[q.id]; else p.wrong[q.id] = { n: ((p.wrong[q.id] || {}).n || 0) + 1, last: now }; }
+    return { ...q, ch };
+  });
+  const total = Q.qs.length, pct = Math.round(100 * right / total);
+  const prof = S.data.profiles.find(x => x.id === Q.pid) || profile();
+  const att = { id: uid("a"), pid: Q.pid, name: prof.name, grade: Q.grade, subj: Q.subj, mode: Q.mode, topics: Q.topics, date: new Date().toISOString(),
+    secs: Math.round((now - Q.started) / 1000), total, right, wrong, skipped, pct,
+    passed: Q.mode === "exam" ? pct >= set.passPct : null, distinction: Q.mode === "exam" ? pct >= set.distinctionPct : null, items };
+  S.data.attempts.unshift(att);
+  if (S.data.attempts.length > 400) S.data.attempts.length = 400;
+  save(); S.quiz = null; saveActive();
+  S.result = att; S.screen = "result"; render(); window.scrollTo(0, 0);
+}
+function quitQuiz() {
+  if (!confirm("Leave this test? You can resume it later from Home.")) return;
+  clearInterval(S.timer); S.pending = S.quiz; saveActive(); S.quiz = null; S.screen = "tabs"; render();
+}
+
+/* ============================== SPEECH ============================== */
+function speak(text, lang) {
+  if (!("speechSynthesis" in window)) { alert("Read-aloud is not supported in this browser."); return; }
+  speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = lang || "en-IN"; u.rate = .92;
+  const v = speechSynthesis.getVoices().find(v => v.lang && v.lang.replace("_", "-").toLowerCase().startsWith(u.lang.slice(0, 2).toLowerCase())); if (v) u.voice = v;
+  speechSynthesis.speak(u);
+}
+function speakQ() {
+  const Q = S.quiz; if (!Q) return; const q = Q.qs[Q.i], s = subjOf(Q.subj);
+  speak(q.q + ". " + q.o.map((o, i) => (s.lang === "hi-IN" ? "विकल्प " : "Option ") + "ABCD"[i] + ": " + o).join(". "), s.lang);
+}
+
+/* ============================== RENDER ============================== */
+function render() {
+  renderTop();
+  const main = $("#main"), tb = $("#tabbar");
+  tb.style.display = S.screen === "tabs" ? "" : "none";
+  if (S.screen === "quiz") main.innerHTML = viewQuiz();
+  else if (S.screen === "result") main.innerHTML = viewResult(S.result);
+  else if (S.screen === "review") main.innerHTML = viewReview(S.result);
+  else if (S.screen === "cert") main.innerHTML = viewCert(S.result);
+  else {
+    tb.innerHTML = [["home","🏠","Home"],["practice","✏️","Practice"],["weak","🎯","Weak Areas"],["history","📊","History"],["settings","⚙️","Settings"]]
+      .map(([k, ic, l]) => `<button class="${S.tab === k ? "on" : ""}" data-act="tab" data-v="${k}"><span class="ic">${ic}</span>${l}</button>`).join("");
+    main.innerHTML = { home: viewHome, practice: viewPractice, weak: viewWeak, history: viewHistory, settings: viewSettings }[S.tab]();
+  }
+}
+function renderTop() {
+  const p = profile();
+  $("#top").innerHTML = `<div class="logo">🏆</div><div class="grow"><h1>Olympiad Practice</h1><div class="sub">Grade ${grade()} · ${h(p.name)}</div></div>
+    ${S.screen === "tabs" ? `<select data-act="profile" aria-label="Child">${S.data.profiles.map(x => `<option value="${h(x.id)}" ${x.id === p.id ? "selected" : ""}>${h(x.name)} (Gr ${x.grade})</option>`).join("")}</select>` : ""}`;
+}
+function subjCard(s, extra = "") {
+  const A = analyse(s.id), acc = A.acc;
+  const weakest = A.weak[0] || A.improving[0];
+  return `<button class="subj" style="--c:${s.c}" data-act="open-subj" data-v="${s.id}">
+    <div class="row between" style="width:100%"><div class="ic">${s.icon}</div>${acc !== null ? `<span class="pill ${acc < 50 ? "weak" : acc < 75 ? "improving" : "strong"}">${acc}%</span>` : `<span class="pill new">New</span>`}</div>
+    <div class="nm">${h(s.name)}</div>
+    <div class="bar"><span style="width:${acc ?? 0}%"></span></div>
+    <div class="meta">${A.answered ? `${A.answered} answered${weakest ? ` · Weak: ${h(weakest.t)}` : ""}` : `${bankFor(s.id).length}+ questions · ${topicsFor(s.id).length} topics`}</div>${extra}
+  </button>`;
+}
+function viewHome() {
+  const atts = S.data.attempts.filter(a => a.pid === profile().id && a.grade === grade());
+  const answered = atts.reduce((s, a) => s + a.right + a.wrong, 0), right = atts.reduce((s, a) => s + a.right, 0);
+  const days = new Set(atts.map(a => dayKey(a.date))); let streak = 0; const d = new Date();
+  if (!days.has(dayKey(d))) d.setDate(d.getDate() - 1);
+  while (days.has(dayKey(d))) { streak++; d.setDate(d.getDate() - 1); }
+  const passed = atts.filter(a => a.passed).length;
+  const weakAll = SUBJECTS.flatMap(s => analyse(s.id).weak.map(r => ({ ...r, s }))).sort((a, b) => a.acc - b.acc).slice(0, 5);
+  return `<div class="stack">
+    ${S.pending ? `<div class="notice row between"><div><b>Unfinished ${MODE_LABEL[S.pending.mode]}</b> — ${h(subjOf(S.pending.subj).name)}, question ${S.pending.i + 1} of ${S.pending.qs.length}</div><div class="row"><button class="btn" data-act="resume">Resume</button><button class="btn ghost" data-act="discard">Discard</button></div></div>` : ""}
+    <div class="grid tiles">
+      <div class="card tile"><div class="v">${answered}</div><div class="l">Questions answered</div></div>
+      <div class="card tile"><div class="v">${answered ? Math.round(100 * right / answered) + "%" : "–"}</div><div class="l">Overall accuracy</div></div>
+      <div class="card tile"><div class="v">${streak} 🔥</div><div class="l">Day streak</div></div>
+      <div class="card tile"><div class="v">${passed} 🏅</div><div class="l">Mock exams passed</div></div>
+    </div>
+    <h2 class="section-title">Select Subject</h2>
+    <div class="grid">${SUBJECTS.map(s => subjCard(s)).join("")}</div>
+    <div class="card">
+      <div class="row between"><h3>🎯 Top weak areas across subjects</h3><button class="btn ghost" data-act="tab" data-v="weak">Full report</button></div>
+      ${weakAll.length ? weakAll.map(r => `<div class="list-item"><div class="ic" style="font-size:1.4rem">${r.s.icon}</div><div class="grow"><b>${h(r.t)}</b> <span class="muted small">· ${h(r.s.name)}</span><div class="bar" style="--c:var(--bad);margin-top:6px"><span style="width:${r.acc}%"></span></div></div><span class="pill weak">${r.acc}%</span><button class="btn" data-act="drill" data-s="${r.s.id}" data-t="${h(r.t)}">Drill</button></div>`).join("")
+        : `<p class="muted">No weak areas found yet. Topics are marked "Needs work" when accuracy over the last attempts is below 50% (at least 3 questions answered).</p>`}
+    </div>
+  </div>`;
+}
+function viewPractice() {
+  if (!S.subj) return `<div class="stack"><h2 class="section-title">Select Subject</h2><div class="grid">${SUBJECTS.map(s => subjCard(s)).join("")}</div></div>`;
+  const s = subjOf(S.subj), topics = topicsFor(S.subj), p = prog(S.subj), set = S.data.settings;
+  const nWrong = bankFor(S.subj).filter(q => p.wrong[q.id]).length, A = analyse(S.subj);
+  return `<div class="stack">
+    <div class="row"><button class="btn ghost" data-act="back-subj">← Subjects</button><h2 style="font-size:1.5rem">${s.icon} ${h(s.name)}</h2></div>
+    <div class="card">
+      <div class="row between"><h3>Topics</h3><button class="btn line" data-act="topic-all">${S.topicSel.length ? "Clear selection" : "All topics"}</button></div>
+      <p class="muted small" style="margin:6px 0 12px">Tap topics to practise only those. Nothing selected = all topics.</p>
+      <div class="chips">${topics.map(t => { const st = topicStatus(p.topics[t]); return `<button class="chip ${S.topicSel.includes(t) ? "on" : ""}" data-act="topic" data-v="${h(t)}">${h(t)}${st.acc !== null ? ` · ${st.acc}%` : ""}</button>`; }).join("")}</div>
+    </div>
+    <div class="grid">
+      <button class="mode" data-act="start" data-v="practice"><span class="ic">✏️</span><div><b>Practice</b><span>${set.practiceCount} questions · answer and explanation shown instantly</span></div></button>
+      <button class="mode" data-act="start" data-v="exam"><span class="ic">⏱️</span><div><b>Mock Exam</b><span>${set.examCount} questions · ${set.examMinutes} min timer · pass ${set.passPct}% · certificate</span></div></button>
+      <button class="mode" data-act="start" data-v="weak"><span class="ic">🎯</span><div><b>Weak-area drill</b><span>${A.weak.length + A.improving.length ? `Targets: ${h([...A.weak, ...A.improving].slice(0, 3).map(r => r.t).join(", "))}` : "Targets the topics you haven't mastered"}</span></div></button>
+      <button class="mode" data-act="start" data-v="mistakes" ${nWrong ? "" : "disabled style='opacity:.5'"}><span class="ic">🔁</span><div><b>Fix my mistakes</b><span>${nWrong} question(s) answered wrongly before</span></div></button>
+    </div>
+    <div class="card"><div class="row between"><h3>Coach's note</h3><button class="btn ghost" data-act="weak-open" data-v="${s.id}">Weak-area report →</button></div><p style="margin:8px 0 0">${coachSummary(s.id, A)}</p></div>
+  </div>`;
+}
+function viewQuiz() {
+  const Q = S.quiz, q = Q.qs[Q.i], s = subjOf(Q.subj), exam = Q.mode === "exam", ch = Q.ans[Q.i], shown = !exam && ch !== null;
+  const answered = Q.ans.filter(a => a !== null).length, last = Q.i === Q.qs.length - 1;
+  const long = q.o.some(o => o.length > 28);
+  return `<div class="quiz stack">
+    <div class="card">
+      <div class="qhead"><button class="btn ghost" data-act="quit">✕ Exit</button>
+        <div class="grow" style="flex:1"><b>${s.icon} ${h(s.name)}</b> <span class="muted">· ${MODE_LABEL[Q.mode]}</span><div class="muted small">Question ${Q.i + 1} of ${Q.qs.length} · ${answered} answered</div></div>
+        ${exam ? `<span class="timer" id="timer">⏱ ${fmtTime((Q.ends - Date.now()) / 1000)}</span>` : ""}
+        <button class="btn ghost" data-act="speak" aria-label="Read aloud">🔊</button></div>
+      <div class="bar" style="--c:${s.c};margin-top:14px"><span style="width:${100 * (Q.i + 1) / Q.qs.length}%"></span></div>
+    </div>
+    <div class="card">
+      <div class="qtopic">${h(q.t)}${q.gen ? " · ✨ new" : ""}</div>
+      <div class="qtext" ${s.lang ? `lang="hi"` : ""}>${h(q.q)}</div>
+      <div class="opts ${long ? "" : "two"}">${q.o.map((o, k) => {
+        let cls = ""; if (shown) { if (k === q.a) cls = "right"; else if (k === ch) cls = "wrong"; } else if (k === ch) cls = "sel";
+        return `<button class="opt ${cls}" data-act="choose" data-v="${k}"><span class="k">${"ABCD"[k]}</span><span>${h(o)}</span></button>`; }).join("")}</div>
+      ${shown ? `<div class="explain"><b>${ch === q.a ? "✅ Correct!" : `❌ Not quite. Correct answer: ${h(q.o[q.a])}`}</b>${h(q.e)}</div>` : ""}
+      <div class="qnav">
+        <button class="btn ghost big" data-act="go" data-v="${Q.i - 1}" ${Q.i ? "" : "disabled"}>← Previous</button>
+        ${last ? `<button class="btn big" data-act="finish">${exam ? "Submit exam" : "See result"}</button>` : `<button class="btn big" data-act="go" data-v="${Q.i + 1}">${exam || shown ? "Next →" : "Skip →"}</button>`}
+      </div>
+    </div>
+    <div class="card"><div class="row between" style="margin-bottom:12px"><b>Questions</b><button class="btn line" data-act="finish">${exam ? "Submit exam" : "End & see result"}</button></div>
+      <div class="palette">${Q.qs.map((x, i) => { let c = ""; if (Q.ans[i] !== null) c = exam ? "done" : (Q.ans[i] === x.a ? "right" : "wrong"); return `<button class="${c} ${i === Q.i ? "cur" : ""}" data-act="go" data-v="${i}">${i + 1}</button>`; }).join("")}</div></div>
+  </div>`;
+}
+function attemptTopics(att) {
+  const m = {}; att.items.forEach(it => { if (it.ch === null) return; const t = m[it.t] = m[it.t] || { a: 0, c: 0 }; t.a++; if (it.ch === it.a) t.c++; });
+  return Object.entries(m).map(([t, v]) => ({ t, ...v, acc: Math.round(100 * v.c / v.a) })).sort((a, b) => a.acc - b.acc);
+}
+function viewResult(att) {
+  const s = subjOf(att.subj), T = attemptTopics(att), weak = T.filter(t => t.acc < 50);
+  const msg = att.pct >= 90 ? "Outstanding! 🌟" : att.pct >= 75 ? "Great work! 🎉" : att.pct >= 50 ? "Good effort — keep going! 💪" : "Let's practise this more. You can do it! 🌱";
+  return `<div class="quiz stack">
+    <div class="card center">
+      <div class="muted">${s.icon} ${h(s.name)} · ${MODE_LABEL[att.mode]} · ${h(att.name)}</div>
+      <div class="score-ring" style="--p:${att.pct};--c:${att.pct >= 75 ? "var(--ok)" : att.pct >= 50 ? "var(--warn)" : "var(--bad)"};margin-top:16px"><div>${att.pct}%</div></div>
+      <h2 style="margin-top:14px">${msg}</h2>
+      ${att.mode === "exam" ? `<p><span class="pill ${att.passed ? "pass" : "fail"}" style="font-size:.95rem">${att.distinction ? "PASSED WITH DISTINCTION" : att.passed ? "PASSED" : "NOT PASSED YET"}</span></p>` : ""}
+      <div class="grid tiles" style="margin-top:12px">
+        <div class="tile"><div class="v" style="color:var(--ok)">${att.right}</div><div class="l">Correct</div></div>
+        <div class="tile"><div class="v" style="color:var(--bad)">${att.wrong}</div><div class="l">Wrong</div></div>
+        <div class="tile"><div class="v">${att.skipped}</div><div class="l">Skipped</div></div>
+        <div class="tile"><div class="v">${fmtTime(att.secs)}</div><div class="l">Time taken</div></div>
+      </div>
+    </div>
+    <div class="card"><h3>Topic-wise result</h3>
+      ${T.length ? T.map(t => `<div class="list-item"><div class="grow"><b>${h(t.t)}</b><div class="bar" style="--c:${t.acc < 50 ? "var(--bad)" : t.acc < 75 ? "var(--warn)" : "var(--ok)"};margin-top:6px"><span style="width:${t.acc}%"></span></div></div><span class="muted">${t.c}/${t.a}</span></div>`).join("") : `<p class="muted">No questions answered.</p>`}
+      ${weak.length ? `<div class="explain"><b>🎯 Coach tip</b>${weak.slice(0, 2).map(t => `<div style="margin-top:6px"><b style="display:inline">${h(t.t)}:</b> ${h(TIPS[t.t] || "Revise this topic and practise more questions.")}</div>`).join("")}</div>` : ""}
+    </div>
+    <div class="row no-print">
+      <button class="btn big" data-act="review">📝 Review answers</button>
+      ${att.passed ? `<button class="btn big" style="background:#b8860b" data-act="cert">🏅 Certificate</button>` : ""}
+      <button class="btn ghost big" data-act="again">🔄 Practise again</button>
+      ${weak.length ? `<button class="btn ghost big" data-act="drill" data-s="${att.subj}" data-t="${h(weak.map(t => t.t).join("|"))}">🎯 Drill weak topics</button>` : ""}
+      <button class="btn ghost big" data-act="home">🏠 Home</button>
+    </div>
+  </div>`;
+}
+function viewReview(att) {
+  const items = att.items.map((it, i) => ({ ...it, n: i + 1 })).filter(it => !S.reviewOnlyWrong || it.ch !== it.a);
+  return `<div class="quiz stack">
+    <div class="row between no-print"><button class="btn ghost" data-act="back-result">← Result</button>
+      <div class="row"><button class="chip ${S.reviewOnlyWrong ? "" : "on"}" data-act="rev-filter" data-v="0">All</button><button class="chip ${S.reviewOnlyWrong ? "on" : ""}" data-act="rev-filter" data-v="1">Only wrong / skipped</button><button class="btn line" data-act="print">🖨 Print</button></div></div>
+    <div class="card">${items.length ? items.map(it => `<div class="review-q"><div class="qtopic">Q${it.n} · ${h(it.t)}</div><div style="font-weight:650;font-size:1.1rem;margin-top:4px">${h(it.q)}</div>
+      <div class="ans">${it.ch === null ? `<span class="w">Skipped</span>` : it.ch === it.a ? `<span class="r">✅ ${h(it.o[it.ch])}</span>` : `<span class="w">❌ Your answer: ${h(it.o[it.ch])}</span>`}${it.ch !== it.a ? ` &nbsp; <span class="r">✔ Correct: ${h(it.o[it.a])}</span>` : ""}</div>
+      <div class="muted small" style="margin-top:4px">💡 ${h(it.e)}</div></div>`).join("") : `<p class="muted">Nothing to show — all correct! 🎉</p>`}</div>
+  </div>`;
+}
+function viewCert(att) {
+  const s = subjOf(att.subj);
+  return `<div class="stack"><div class="row no-print"><button class="btn ghost" data-act="back-result">← Back</button><button class="btn" data-act="print">🖨 Print / Save as PDF</button></div>
+    <div class="cert"><div style="font-size:3rem">🏆</div><div class="kick">Certificate of Achievement</div><h2>Olympiad Practice</h2>
+      <div>This is proudly presented to</div><div class="name">${h(att.name)}</div>
+      <div style="font-size:1.15rem;max-width:640px;margin:0 auto">for successfully completing the <b>Grade ${att.grade} ${h(s.name)}</b> Olympiad mock exam with a score of <b>${att.pct}%</b>${att.distinction ? " — <b>with Distinction</b>" : ""}.</div>
+      <div class="grid3"><div><span>Score</span><b>${att.right} / ${att.total}</b></div><div><span>Date</span><b>${new Date(att.date).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}</b></div><div><span>Certificate ID</span><b>${att.id.toUpperCase().slice(0, 10)}</b></div></div>
+    </div></div>`;
+}
+function viewWeak() {
+  const subj = S.weakSubj, s = subjOf(subj), A = analyse(subj), p = prog(subj);
+  const mistakes = bankFor(subj).filter(q => p.wrong[q.id]).sort((a, b) => p.wrong[b.id].last - p.wrong[a.id].last).slice(0, 8);
+  return `<div class="stack">
+    <div class="row between"><h2 class="section-title">🎯 Weak-area report — ${h(profile().name)}</h2><button class="btn line no-print" data-act="print">🖨 Print report</button></div>
+    <div class="chips no-print">${SUBJECTS.map(x => `<button class="chip ${x.id === subj ? "on" : ""}" data-act="weak-subj" data-v="${x.id}">${x.icon} ${h(x.name)}</button>`).join("")}</div>
+    <div class="grid tiles">
+      <div class="card tile"><div class="v">${A.acc ?? "–"}${A.acc !== null ? "%" : ""}</div><div class="l">${h(s.name)} accuracy</div></div>
+      <div class="card tile"><div class="v" style="color:var(--bad)">${A.weak.length}</div><div class="l">Needs work</div></div>
+      <div class="card tile"><div class="v" style="color:var(--warn)">${A.improving.length}</div><div class="l">Improving</div></div>
+      <div class="card tile"><div class="v" style="color:var(--ok)">${A.strong.length}</div><div class="l">Strong</div></div>
+    </div>
+    <div class="card"><h3>Coach's summary</h3><p style="margin:8px 0 0">${coachSummary(subj, A)}</p>
+      ${A.weak.length + A.improving.length ? `<button class="btn big no-print" style="margin-top:14px" data-act="drill" data-s="${subj}" data-t="${h([...A.weak, ...A.improving].map(r => r.t).join("|"))}">🎯 Start a drill on these topics</button>` : ""}</div>
+    <div class="card"><h3 style="margin-bottom:6px">Topic by topic</h3><p class="muted small" style="margin:0 0 6px">Based on the last 20 answers in each topic. Under 50% = Needs work · 50–74% = Improving · 75%+ = Strong.</p>
+      ${A.rows.map(r => `<div class="topic-row"><div><b>${h(r.t)}</b><div class="muted small">${r.a ? `${r.c}/${r.a} correct overall` : "Not attempted"}</div></div>
+        <div class="bar-wrap"><div class="bar" style="--c:${r.s === "weak" ? "var(--bad)" : r.s === "improving" ? "var(--warn)" : r.s === "strong" ? "var(--ok)" : "var(--muted)"}"><span style="width:${r.acc ?? 0}%"></span></div></div>
+        <div class="row" style="gap:8px;justify-content:flex-end"><span class="pill ${r.s}">${r.acc !== null ? r.acc + "% · " : ""}${r.label}</span><button class="btn ghost no-print" data-act="drill" data-s="${subj}" data-t="${h(r.t)}">Drill</button></div>
+        ${r.s === "weak" || r.s === "improving" ? `<div class="tip">💡 <b>How to coach:</b> ${h(TIPS[r.t] || "Revise the chapter, then practise 10 questions on this topic.")}</div>` : ""}</div>`).join("")}
+    </div>
+    <div class="card"><h3>Recent mistakes to revise</h3>
+      ${mistakes.length ? mistakes.map(q => `<div class="review-q"><div class="qtopic">${h(q.t)} · wrong ${p.wrong[q.id].n}×</div><div style="font-weight:600;margin-top:2px">${h(q.q)}</div><div class="ans"><span class="r">✔ ${h(q.opts[0])}</span></div><div class="muted small">💡 ${h(q.e)}</div></div>`).join("")
+        : `<p class="muted">No outstanding mistakes. A question leaves this list once it is answered correctly.</p>`}
+    </div>
+  </div>`;
+}
+function viewHistory() {
+  const atts = S.data.attempts.filter(a => a.pid === profile().id && (S.histFilter === "all" || a.subj === S.histFilter));
+  return `<div class="stack">
+    <div class="row between"><h2 class="section-title">📊 History — ${h(profile().name)}</h2><button class="btn line" data-act="csv">⬇ Download CSV</button></div>
+    <div class="chips"><button class="chip ${S.histFilter === "all" ? "on" : ""}" data-act="hist" data-v="all">All</button>${SUBJECTS.map(x => `<button class="chip ${S.histFilter === x.id ? "on" : ""}" data-act="hist" data-v="${x.id}">${x.icon} ${h(x.name)}</button>`).join("")}</div>
+    <div class="card">${atts.length ? atts.map(a => { const s = subjOf(a.subj); return `<div class="list-item"><div style="font-size:1.6rem">${s.icon}</div>
+      <div class="grow"><b>${h(s.name)}</b> <span class="muted">· ${MODE_LABEL[a.mode]}</span><div class="muted small">${fmtDate(a.date)} · ${a.right}/${a.total} correct · ${fmtTime(a.secs)}</div></div>
+      <span class="pill ${a.mode === "exam" ? (a.passed ? "pass" : "fail") : a.pct >= 75 ? "strong" : a.pct >= 50 ? "improving" : "weak"}">${a.pct}%${a.mode === "exam" ? (a.distinction ? " · Distinction" : a.passed ? " · Pass" : " · Not passed") : ""}</span>
+      <button class="btn ghost" data-act="view-att" data-v="${a.id}">View</button></div>`; }).join("") : `<p class="muted">No attempts yet.</p>`}</div>
+  </div>`;
+}
+function viewSettings() {
+  const st = S.data.settings, num = (k, l, min, max) => `<div class="field"><label>${l}</label><input type="number" inputmode="numeric" min="${min}" max="${max}" data-set="${k}" value="${st[k]}"></div>`;
+  return `<div class="stack">
+    <div class="card"><h3>👧 Children (profiles)</h3><p class="muted small">Each child has separate progress, weak-area reports and history.</p>
+      ${S.data.profiles.map(p => `<div class="list-item"><div class="grow form-grid" style="grid-template-columns:2fr 1fr"><div class="field"><label>Name</label><input data-prof-name="${h(p.id)}" value="${h(p.name)}"></div>
+        <div class="field"><label>Grade</label><select data-prof-grade="${h(p.id)}">${GRADES.map(g => `<option ${g === p.grade ? "selected" : ""}>${g}</option>`).join("")}</select></div></div>
+        ${p.id === profile().id ? `<span class="pill strong">Active</span>` : `<button class="btn ghost" data-act="use-prof" data-v="${h(p.id)}">Use</button>`}
+        ${S.data.profiles.length > 1 ? `<button class="btn danger" data-act="del-prof" data-v="${h(p.id)}">Delete</button>` : ""}</div>`).join("")}
+      <button class="btn" style="margin-top:10px" data-act="add-prof">+ Add child</button></div>
+    <div class="card"><h3>⚙️ Test settings</h3><div class="form-grid" style="margin-top:12px">
+      ${num("practiceCount", "Practice questions", 5, 50)}${num("examCount", "Mock exam questions", 10, 60)}${num("examMinutes", "Mock exam minutes", 5, 120)}
+      ${num("passPct", "Pass mark %", 30, 100)}${num("distinctionPct", "Distinction %", 50, 100)}
+      <div class="field"><label>Read questions aloud automatically</label><select data-set="autoRead"><option value="false" ${!st.autoRead ? "selected" : ""}>Off</option><option value="true" ${st.autoRead ? "selected" : ""}>On</option></select></div></div></div>
+    <div class="card"><h3>💾 Backup & restore</h3><p class="muted small">Progress is saved only on this device. Make a backup regularly, for example before updating the app file.</p>
+      <div class="row"><button class="btn" data-act="backup">⬇ Download backup</button><button class="btn ghost" data-act="copy-backup">📋 Copy backup text</button>
+        <label class="btn ghost">📂 Restore from file<input type="file" accept=".json,application/json" data-act="restore-file" hidden></label></div>
+      <div class="field" style="margin-top:14px"><label>Or paste backup text here to restore</label><textarea rows="3" id="restoreText" placeholder="Paste backup text…"></textarea></div>
+      <div class="row" style="margin-top:10px"><button class="btn ghost" data-act="restore-text">Restore pasted text</button><button class="btn danger" data-act="reset">Reset ${h(profile().name)}'s progress</button></div></div>
+    <div class="card"><h3>📱 About</h3><p class="muted small" style="margin:6px 0 0">Works fully offline — no internet, no accounts, no ads. Question bank: ${SUBJECTS.map(s => `${h(s.name)} ${bankFor(s.id).length}`).join(" · ")}${Object.keys(GEN).length ? " · plus unlimited auto-generated Math & Reasoning questions" : ""}.</p></div>
+  </div>`;
+}
+
+/* ============================== EXPORT / IMPORT ============================== */
+function download(name, text, type) {
+  const blob = new Blob([text], { type }), url = URL.createObjectURL(blob), a = document.createElement("a");
+  a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+function restore(text) {
+  try { const d = JSON.parse(text); if (!d || !Array.isArray(d.profiles) || !d.settings) throw 0;
+    if (!confirm("Replace ALL progress on this device with this backup?")) return;
+    S.data = d; save(); S.data = loadData(); alert("Backup restored ✅"); render();
+  } catch (e) { alert("That does not look like a valid Olympiad Practice backup."); }
+}
+function csv() {
+  const rows = [["Date", "Child", "Grade", "Subject", "Mode", "Correct", "Wrong", "Skipped", "Total", "Percent", "Result", "Time (s)"]]
+    .concat(S.data.attempts.map(a => [a.date, a.name, a.grade, subjOf(a.subj).name, MODE_LABEL[a.mode], a.right, a.wrong, a.skipped, a.total, a.pct, a.mode === "exam" ? (a.distinction ? "Distinction" : a.passed ? "Pass" : "Not passed") : "", a.secs]));
+  download("olympiad-history.csv", "﻿" + rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n"), "text/csv");
+}
+
+/* ============================== EVENTS ============================== */
+document.addEventListener("click", e => {
+  const el = e.target.closest("[data-act]"); if (!el || el.tagName === "SELECT" || el.tagName === "INPUT") return;
+  const act = el.dataset.act, v = el.dataset.v;
+  switch (act) {
+    case "tab": S.tab = v; S.screen = "tabs"; render(); window.scrollTo(0, 0); break;
+    case "open-subj": S.subj = v; S.topicSel = []; S.tab = "practice"; render(); window.scrollTo(0, 0); break;
+    case "back-subj": S.subj = null; render(); break;
+    case "topic": S.topicSel = S.topicSel.includes(v) ? S.topicSel.filter(t => t !== v) : [...S.topicSel, v]; render(); break;
+    case "topic-all": S.topicSel = []; render(); break;
+    case "start": if (S.pending && !confirm("Starting a new test will discard the unfinished one. Continue?")) return; startQuiz(S.subj, v, v === "practice" || v === "exam" ? S.topicSel : []); break;
+    case "drill": if (S.pending && !confirm("Starting a new test will discard the unfinished one. Continue?")) return; startQuiz(el.dataset.s, "practice", el.dataset.t.split("|")); break;
+    case "weak-open": S.weakSubj = v; S.tab = "weak"; render(); break;
+    case "weak-subj": S.weakSubj = v; render(); break;
+    case "choose": choose(+v); break;
+    case "go": go(+v); break;
+    case "finish": finishQuiz(false); break;
+    case "quit": quitQuiz(); break;
+    case "speak": speakQ(); break;
+    case "resume": resumeQuiz(); break;
+    case "discard": if (confirm("Discard the unfinished test?")) { S.pending = null; try { localStorage.removeItem(ACTIVE_KEY); } catch (x) {} render(); } break;
+    case "review": S.screen = "review"; render(); window.scrollTo(0, 0); break;
+    case "rev-filter": S.reviewOnlyWrong = v === "1"; render(); break;
+    case "back-result": S.screen = "result"; render(); break;
+    case "cert": S.screen = "cert"; render(); window.scrollTo(0, 0); break;
+    case "again": startQuiz(S.result.subj, S.result.mode === "mistakes" ? "practice" : S.result.mode, S.result.topics); break;
+    case "home": S.screen = "tabs"; S.tab = "home"; render(); window.scrollTo(0, 0); break;
+    case "view-att": S.result = S.data.attempts.find(a => a.id === v); S.screen = "result"; render(); window.scrollTo(0, 0); break;
+    case "hist": S.histFilter = v; render(); break;
+    case "print": window.print(); break;
+    case "csv": csv(); break;
+    case "backup": download(`olympiad-backup-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify(S.data), "application/json"); break;
+    case "copy-backup": (navigator.clipboard ? navigator.clipboard.writeText(JSON.stringify(S.data)).then(() => alert("Backup copied. Paste it into Notes or a message to keep it safe.")) : Promise.reject()).catch(() => alert("Copy is not available here — use Download backup.")); break;
+    case "restore-text": restore($("#restoreText").value); break;
+    case "reset": if (confirm(`Erase all progress and history for ${profile().name}? This cannot be undone.`)) { delete S.data.progress[profile().id]; S.data.attempts = S.data.attempts.filter(a => a.pid !== profile().id); save(); render(); } break;
+    case "add-prof": { const n = prompt("Child's name?"); if (n && n.trim()) { const id = uid("p"); S.data.profiles.push({ id, name: n.trim(), grade: 6 }); S.data.activeProfile = id; save(); render(); } break; }
+    case "use-prof": S.data.activeProfile = v; save(); render(); break;
+    case "del-prof": { const p = S.data.profiles.find(x => x.id === v); if (p && confirm(`Delete ${p.name} and all their progress?`)) { S.data.profiles = S.data.profiles.filter(x => x.id !== v); delete S.data.progress[v]; S.data.attempts = S.data.attempts.filter(a => a.pid !== v); if (S.data.activeProfile === v) S.data.activeProfile = S.data.profiles[0].id; save(); render(); } break; }
+  }
+});
+document.addEventListener("change", e => {
+  const el = e.target;
+  if (el.dataset.act === "profile") { S.data.activeProfile = el.value; save(); render(); }
+  else if (el.dataset.set) { const k = el.dataset.set; let val = el.value; if (k === "autoRead") val = val === "true"; else { val = Math.round(+val); if (!(val > 0)) return; } S.data.settings[k] = val; save(); }
+  else if (el.dataset.profName) { const p = S.data.profiles.find(x => x.id === el.dataset.profName); if (p && el.value.trim()) { p.name = el.value.trim(); save(); renderTop(); } }
+  else if (el.dataset.profGrade) { const p = S.data.profiles.find(x => x.id === el.dataset.profGrade); if (p) { p.grade = +el.value; save(); render(); } }
+  else if (el.dataset.act === "restore-file" && el.files[0]) { const r = new FileReader(); r.onload = () => restore(r.result); r.readAsText(el.files[0]); }
+});
+document.addEventListener("keydown", e => {
+  if (S.screen !== "quiz" || /INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
+  const k = "abcd".indexOf(e.key.toLowerCase()); if (k >= 0 && k < S.quiz.qs[S.quiz.i].o.length) choose(k);
+  else if (e.key === "ArrowRight") go(S.quiz.i + 1); else if (e.key === "ArrowLeft") go(S.quiz.i - 1);
+});
+if ("speechSynthesis" in window) speechSynthesis.getVoices();
+if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {}); // only used for the optional website install
+render();
+</script>
+</body>
+</html>

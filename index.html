@@ -1,0 +1,1062 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Olympiad">
+<meta name="theme-color" content="#4f46e5">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Olympiad Practice</title>
+<style>
+:root{
+  --bg:#f3f5fb; --card:#ffffff; --ink:#172033; --muted:#5b6680; --line:#e1e6f0; --soft:#eef1f8;
+  --brand:#4f46e5; --brand2:#7c3aed; --onbrand:#fff;
+  --ok:#0f9960; --okbg:#e3f6ec; --bad:#d93a44; --badbg:#fde9ea; --warn:#b97400; --warnbg:#fff3d9; --new:#5b6680; --newbg:#eef1f8;
+  --shadow:0 4px 18px rgba(23,32,51,.07);
+  --safe-b:env(safe-area-inset-bottom,0px); --safe-t:env(safe-area-inset-top,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1320; --card:#181d2d; --ink:#e8ecf6; --muted:#9aa5bf; --line:#2a3148; --soft:#20263a;
+    --brand:#7c79ff; --brand2:#a78bfa; --okbg:#123326; --ok:#3ccf8e; --badbg:#3a1a1f; --bad:#ff6b74; --warnbg:#3a2d10; --warn:#f2b441; --newbg:#232a40; --new:#9aa5bf;
+    --shadow:0 4px 18px rgba(0,0,0,.35);
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans Devanagari","Nirmala UI",sans-serif;-webkit-tap-highlight-color:transparent}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;touch-action:manipulation}
+h1,h2,h3{margin:0;line-height:1.25}
+.muted{color:var(--muted)} .small{font-size:.9rem} .center{text-align:center}
+/* header */
+.top{position:sticky;top:0;z-index:20;background:linear-gradient(120deg,var(--brand),var(--brand2));color:var(--onbrand);padding:calc(10px + var(--safe-t)) 20px 12px;display:flex;align-items:center;gap:14px}
+.top .logo{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.18);display:grid;place-items:center;font-size:26px;flex:none}
+.top h1{font-size:1.25rem}
+.top .sub{font-size:.85rem;opacity:.85}
+.top .grow{flex:1;min-width:0}
+.top select{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:12px;padding:9px 12px;min-height:44px;max-width:200px}
+.top select option{color:#172033}
+main{max-width:1120px;margin:0 auto;padding:20px 20px calc(100px + var(--safe-b))}
+/* tab bar */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--card);border-top:1px solid var(--line);display:flex;justify-content:center;padding-bottom:var(--safe-b)}
+.tabbar button{flex:1;max-width:180px;background:none;border:0;padding:8px 4px 10px;display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--muted);font-size:.8rem;font-weight:600;min-height:62px}
+.tabbar button .ic{font-size:1.45rem;line-height:1.1}
+.tabbar button.on{color:var(--brand)}
+/* cards & layout */
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:var(--shadow)}
+.stack>*+*{margin-top:18px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.between{justify-content:space-between}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+.grid.tiles{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.tile .v{font-size:2rem;font-weight:800;letter-spacing:-.02em}
+.tile .l{color:var(--muted);font-size:.9rem;font-weight:600}
+.section-title{font-size:1.3rem;margin:6px 0 2px}
+.subj{display:flex;flex-direction:column;gap:10px;text-align:left;border:1px solid var(--line);background:var(--card);border-radius:20px;padding:18px;box-shadow:var(--shadow);min-height:150px;position:relative;overflow:hidden}
+.subj::before{content:"";position:absolute;inset:0 0 auto 0;height:5px;background:var(--c)}
+.subj .ic{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;font-size:28px;font-weight:800;background:var(--soft);background:color-mix(in srgb,var(--c) 15%,transparent);color:var(--c)}
+.subj .nm{font-size:1.15rem;font-weight:800}
+.subj .meta{font-size:.88rem;color:var(--muted)}
+.bar{height:10px;border-radius:99px;background:var(--soft);overflow:hidden}
+.bar>span{display:block;height:100%;border-radius:99px;background:var(--c,var(--brand))}
+.btn{border:0;border-radius:14px;padding:12px 18px;min-height:48px;font-weight:700;background:var(--brand);color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn.ghost{background:var(--soft);color:var(--ink)}
+.btn.line{background:transparent;border:1.5px solid var(--line);color:var(--ink)}
+.btn.danger{background:var(--badbg);color:var(--bad)}
+.btn.big{min-height:60px;font-size:1.08rem;padding:14px 22px}
+.btn:disabled{opacity:.45}
+.mode{display:flex;gap:14px;align-items:flex-start;text-align:left;border:1.5px solid var(--line);background:var(--card);border-radius:18px;padding:16px;min-height:96px}
+.mode .ic{font-size:30px;flex:none}
+.mode b{display:block;font-size:1.05rem}
+.mode span{color:var(--muted);font-size:.9rem}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{border:1.5px solid var(--line);background:var(--card);border-radius:99px;padding:9px 16px;min-height:44px;font-weight:600;font-size:.95rem}
+.chip.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.pill{display:inline-block;border-radius:99px;padding:3px 11px;font-size:.8rem;font-weight:700;white-space:nowrap}
+.pill.weak{background:var(--badbg);color:var(--bad)} .pill.improving{background:var(--warnbg);color:var(--warn)}
+.pill.strong{background:var(--okbg);color:var(--ok)} .pill.new{background:var(--newbg);color:var(--new)}
+.pill.pass{background:var(--okbg);color:var(--ok)} .pill.fail{background:var(--badbg);color:var(--bad)}
+.topic-row{display:grid;grid-template-columns:minmax(150px,1.1fr) 2fr auto;gap:14px;align-items:center;padding:14px 0;border-top:1px solid var(--line)}
+.topic-row:first-child{border-top:0}
+.topic-row .tip{grid-column:1/-1;font-size:.92rem;color:var(--muted);background:var(--soft);border-radius:12px;padding:10px 12px;margin-top:-4px}
+.list-item{display:flex;gap:14px;align-items:center;padding:14px 0;border-top:1px solid var(--line)}
+.list-item:first-child{border-top:0}
+.list-item .grow{flex:1;min-width:0}
+.notice{border-radius:16px;padding:14px 16px;background:var(--warnbg);color:var(--ink);border:1px solid color-mix(in srgb,var(--warn) 30%,transparent)}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:.85rem;font-weight:700;color:var(--muted)}
+.field input,.field select,textarea{border:1.5px solid var(--line);background:var(--card);border-radius:12px;padding:10px 12px;min-height:46px;width:100%}
+.form-grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+/* quiz */
+.quiz{max-width:960px;margin:0 auto}
+.qhead{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.timer{font-variant-numeric:tabular-nums;font-weight:800;font-size:1.2rem;background:var(--soft);padding:8px 14px;border-radius:12px}
+.timer.low{background:var(--badbg);color:var(--bad)}
+.qtext{font-size:1.35rem;font-weight:650;line-height:1.5;margin:6px 0 4px}
+.qtopic{font-size:.85rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.opts{display:grid;gap:12px;margin-top:16px}
+@media (min-width:1000px){.opts.two{grid-template-columns:1fr 1fr}}
+.opt{display:flex;align-items:center;gap:14px;text-align:left;width:100%;min-height:66px;padding:14px 18px;border:2px solid var(--line);background:var(--card);border-radius:16px;font-size:1.15rem;font-weight:550}
+.opt .k{flex:none;width:38px;height:38px;border-radius:11px;background:var(--soft);display:grid;place-items:center;font-weight:800;font-size:1rem}
+.opt.sel{border-color:var(--brand);background:color-mix(in srgb,var(--brand) 9%,var(--card))}
+.opt.sel .k{background:var(--brand);color:#fff}
+.opt.right{border-color:var(--ok);background:var(--okbg)} .opt.right .k{background:var(--ok);color:#fff}
+.opt.wrong{border-color:var(--bad);background:var(--badbg)} .opt.wrong .k{background:var(--bad);color:#fff}
+.explain{margin-top:16px;border-radius:16px;padding:14px 16px;background:var(--soft);font-size:1rem}
+.explain b{display:block;margin-bottom:2px}
+.palette{display:grid;grid-template-columns:repeat(auto-fill,minmax(46px,1fr));gap:8px}
+.palette button{min-height:46px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);font-weight:700}
+.palette button.done{background:color-mix(in srgb,var(--brand) 14%,var(--card));border-color:var(--brand)}
+.palette button.cur{outline:3px solid var(--brand);outline-offset:1px}
+.palette button.right{background:var(--okbg);border-color:var(--ok)} .palette button.wrong{background:var(--badbg);border-color:var(--bad)}
+.qnav{display:flex;gap:12px;margin-top:20px}
+.qnav .btn{flex:1}
+.score-ring{width:150px;height:150px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--c) calc(var(--p)*1%),var(--soft) 0);margin:0 auto}
+.score-ring>div{width:118px;height:118px;border-radius:50%;background:var(--card);display:grid;place-items:center;font-size:2rem;font-weight:800}
+.review-q{padding:16px 0;border-top:1px solid var(--line)}
+.review-q:first-child{border-top:0}
+.ans{margin-top:6px;font-size:.98rem}
+.ans .r{color:var(--ok);font-weight:700} .ans .w{color:var(--bad);font-weight:700}
+/* certificate */
+.cert{max-width:900px;margin:0 auto;background:#fffdf6;color:#1d2433;border:10px double #c69a2b;border-radius:18px;padding:44px 36px;text-align:center}
+.cert .kick{letter-spacing:.2em;text-transform:uppercase;font-size:.8rem;font-weight:800;color:#8a6200}
+.cert h2{font-size:2.3rem;margin:10px 0;font-family:Georgia,"Times New Roman",serif}
+.cert .name{font-size:2.4rem;font-weight:800;color:#3730a3;border-bottom:2px solid #d9cfa8;display:inline-block;padding:4px 30px 8px;margin:14px 0;font-family:Georgia,serif}
+.cert .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:22px}
+.cert .grid3 div{background:#f6efd8;border-radius:12px;padding:10px}
+.cert .grid3 span{display:block;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:#7a6a3a;font-weight:800}
+@media (max-width:700px){.topic-row{grid-template-columns:1fr auto}.topic-row .bar-wrap{grid-column:1/-1;order:3}.cert .grid3{grid-template-columns:1fr}}
+@media print{
+  .top,.tabbar,.no-print{display:none!important}
+  body{background:#fff} main{padding:0;max-width:none}
+  .card{box-shadow:none;break-inside:avoid}
+  .cert{border-width:8px;margin-top:20mm}
+}
+</style>
+</head>
+<body>
+<header class="top no-print" id="top"></header>
+<main id="main"></main>
+<nav class="tabbar no-print" id="tabbar"></nav>
+
+<script>
+/* ==========================================================================
+   GRADE 6 QUESTION BANK
+   Format: [topic, question, [CORRECT, wrong1, wrong2, wrong3], explanation]
+   The correct answer is ALWAYS written first; the app shuffles options.
+   To add Grade 7 next year: copy this file to questions-grade7.js,
+   change QB[6] to QB[7], replace the questions, and run: node build.js
+   ========================================================================== */
+window.QB = window.QB || {};
+QB[6] = {
+math: [
+["Number System","What is the place value of 7 in 3,47,812?",["7,000","700","70,000","7"],"7 is in the thousands place: 7 × 1,000 = 7,000."],
+["Number System","What is the successor of 99,999?",["1,00,000","99,998","1,00,001","10,000"],"Successor = number + 1. 99,999 + 1 = 1,00,000."],
+["Number System","What is XLIX in Hindu-Arabic numerals?",["49","51","41","59"],"XL = 50 − 10 = 40 and IX = 10 − 1 = 9, so XLIX = 49."],
+["Number System","The smallest 5-digit number using 5, 0, 3, 8, 1 (each once) is:",["10,358","13,058","10,385","15,038"],"Smallest non-zero digit goes first (1), then 0, then the rest in increasing order: 10,358."],
+["Number System","Estimate 4,872 + 3,129 to the nearest hundred.",["8,000","7,900","8,100","7,000"],"4,872 ≈ 4,900 and 3,129 ≈ 3,100. 4,900 + 3,100 = 8,000."],
+["Number System","How many whole numbers lie strictly between 32 and 53?",["20","21","22","19"],"Numbers between a and b = b − a − 1 = 53 − 32 − 1 = 20."],
+["Number System","Which is the smallest whole number?",["0","1","−1","There is none"],"Whole numbers start from 0: 0, 1, 2, 3, …"],
+["Factors & Multiples","What is the HCF of 36 and 48?",["12","6","24","4"],"36 = 2²×3², 48 = 2⁴×3. Common: 2²×3 = 12."],
+["Factors & Multiples","What is the LCM of 12 and 18?",["36","72","6","54"],"12 = 2²×3, 18 = 2×3². LCM = 2²×3² = 36."],
+["Factors & Multiples","How many prime numbers are there between 1 and 20?",["8","7","9","10"],"2, 3, 5, 7, 11, 13, 17, 19 — that is 8 primes."],
+["Factors & Multiples","Which number is divisible by 9?",["7,245","1,234","5,551","8,102"],"A number is divisible by 9 if its digit sum is. 7+2+4+5 = 18, which is divisible by 9."],
+["Factors & Multiples","A number divisible by both 4 and 6 is always divisible by:",["12","24","10","18"],"LCM of 4 and 6 is 12, so the number must be a multiple of 12 (but not always of 24)."],
+["Factors & Multiples","Which is the smallest prime number?",["2","1","3","0"],"1 is neither prime nor composite. 2 is the smallest (and only even) prime."],
+["Factors & Multiples","Which pair of numbers is co-prime?",["8 and 15","6 and 9","10 and 25","12 and 18"],"Co-prime numbers have HCF 1. HCF(8, 15) = 1."],
+["Fractions & Decimals","3/4 + 1/6 = ?",["11/12","4/10","5/12","7/12"],"LCM of 4 and 6 is 12: 9/12 + 2/12 = 11/12."],
+["Fractions & Decimals","0.25 written as a fraction in lowest terms is:",["1/4","1/25","2/5","25/10"],"0.25 = 25/100 = 1/4."],
+["Fractions & Decimals","2.5 × 0.4 = ?",["1","10","0.1","1.25"],"25 × 4 = 100; there are 2 decimal places in total, so 1.00 = 1."],
+["Fractions & Decimals","Which is the largest?",["0.5","0.45","0.405","0.05"],"Compare as 0.500, 0.450, 0.405, 0.050 — 0.500 is largest."],
+["Fractions & Decimals","Which fraction is equivalent to 2/3?",["8/12","6/8","4/9","3/2"],"2/3 = (2×4)/(3×4) = 8/12."],
+["Fractions & Decimals","₹2.50 + ₹3.75 = ?",["₹6.25","₹5.25","₹6.75","₹5.75"],"Add paise and rupees: 2.50 + 3.75 = 6.25."],
+["Integers","−7 + 12 − 5 = ?",["0","−10","10","2"],"−7 + 12 = 5, then 5 − 5 = 0."],
+["Integers","Which is greater: −3 or −8?",["−3","−8","Both are equal","Cannot be compared"],"On the number line −3 is to the right of −8, so −3 is greater."],
+["Integers","The temperature is 5°C. It falls by 8°C. What is the new temperature?",["−3°C","3°C","−13°C","13°C"],"5 − 8 = −3."],
+["Integers","(−4) + (−6) = ?",["−10","10","−2","2"],"Adding two negatives: add the numbers and keep the minus sign."],
+["Integers","The additive inverse of −9 is:",["9","−9","0","1/9"],"Additive inverse gives sum 0: −9 + 9 = 0."],
+["Algebra","If x + 9 = 23, then x = ?",["14","32","13","15"],"x = 23 − 9 = 14."],
+["Algebra","5 times a number minus 3 equals 32. The number is:",["7","6","8","5"],"5n − 3 = 32 → 5n = 35 → n = 7."],
+["Algebra","Which expression means 'x multiplied by 4, then 3 added'?",["4x + 3","4(x + 3)","3x + 4","x + 7"],"First multiply: 4x, then add 3: 4x + 3."],
+["Algebra","If 2y = 18, then y = ?",["9","16","20","36"],"y = 18 ÷ 2 = 9."],
+["Algebra","One letter L needs 2 matchsticks. How many matchsticks for n letters L?",["2n","n + 2","n²","2 + n²"],"Each L uses 2 sticks, so n L's use 2 × n = 2n."],
+["Ratio & Proportion","The ratio 24 : 36 in simplest form is:",["2 : 3","3 : 4","4 : 6","6 : 9"],"Divide both by HCF 12: 2 : 3."],
+["Ratio & Proportion","6 workers finish a job in 12 days. How many days will 9 workers take?",["8","18","6","10"],"Total work = 6 × 12 = 72 worker-days. 72 ÷ 9 = 8 days."],
+["Ratio & Proportion","One pen costs ₹12. What is the cost of 15 pens?",["₹180","₹170","₹150","₹200"],"Unitary method: 12 × 15 = 180."],
+["Ratio & Proportion","Are 3 : 4 and 12 : 16 in proportion?",["Yes","No","Only if multiplied by 2","Cannot be found"],"Product of extremes 3×16 = 48 equals product of means 4×12 = 48."],
+["Ratio & Proportion","Divide ₹60 in the ratio 1 : 2. What is the larger share?",["₹40","₹20","₹30","₹45"],"Total parts = 3. Larger share = 2/3 × 60 = ₹40."],
+["Geometry","How many diagonals does a hexagon have?",["9","6","12","18"],"Diagonals = n(n − 3)/2 = 6 × 3 / 2 = 9."],
+["Geometry","A straight angle measures:",["180°","90°","360°","270°"],"A straight angle is a straight line — 180°."],
+["Geometry","What is the complement of 35°?",["55°","145°","65°","45°"],"Complementary angles add to 90°: 90 − 35 = 55°."],
+["Geometry","How many lines of symmetry does a square have?",["4","2","1","8"],"2 diagonals + 2 lines joining midpoints of opposite sides = 4."],
+["Geometry","What is the angle between the clock hands at 3 o'clock?",["90°","60°","120°","45°"],"Each hour mark = 30°. 3 × 30° = 90°."],
+["Geometry","A triangle with all three sides of different lengths is called:",["Scalene","Isosceles","Equilateral","Right-angled"],"Scalene = no equal sides."],
+["Geometry","How many edges does a cube have?",["12","6","8","10"],"A cube has 6 faces, 8 vertices and 12 edges."],
+["Geometry","How many faces does a triangular prism have?",["5","6","3","9"],"2 triangular faces + 3 rectangular faces = 5."],
+["Mensuration","Perimeter of a rectangle 8 cm long and 5 cm wide is:",["26 cm","40 cm","13 cm","30 cm"],"Perimeter = 2(l + b) = 2(8 + 5) = 26 cm."],
+["Mensuration","Area of a square of side 7 cm is:",["49 cm²","28 cm²","14 cm²","56 cm²"],"Area = side × side = 7 × 7 = 49 cm²."],
+["Mensuration","A square has perimeter 36 cm. Its side is:",["9 cm","6 cm","18 cm","12 cm"],"Side = perimeter ÷ 4 = 36 ÷ 4 = 9 cm."],
+["Mensuration","A rectangle has area 48 cm² and length 8 cm. Its breadth is:",["6 cm","40 cm","5 cm","8 cm"],"Breadth = area ÷ length = 48 ÷ 8 = 6 cm."],
+["Mensuration","Perimeter of an equilateral triangle of side 6 cm is:",["18 cm","12 cm","36 cm","24 cm"],"3 equal sides: 3 × 6 = 18 cm."],
+["Data Handling","The mean of 4, 8, 6, 10, 12 is:",["8","6","10","40"],"Sum = 40, count = 5, mean = 40 ÷ 5 = 8."],
+["Data Handling","The range of 3, 9, 4, 15, 7 is:",["12","15","3","9"],"Range = highest − lowest = 15 − 3 = 12."],
+["Data Handling","In a pictograph one 📘 = 5 books. How many books do 7 symbols show?",["35","12","7","30"],"7 × 5 = 35 books."],
+["Data Handling","The mode of 2, 3, 3, 5, 3, 7 is:",["3","2","5","7"],"Mode = the value that appears most often. 3 appears three times."],
+["Mental Math","25 × 48 = ?",["1,200","1,000","1,250","960"],"25 × 4 = 100, and 48 = 4 × 12, so 100 × 12 = 1,200."],
+["Mental Math","999 + 999 = ?",["1,998","1,989","1,899","2,000"],"999 + 999 = 2 × 1,000 − 2 = 1,998."],
+["Mental Math","125 × 8 = ?",["1,000","800","1,250","975"],"125 × 8 = 1,000 — a good fact to remember."]
+],
+science: [
+["Food & Health","Deficiency of Vitamin C causes:",["Scurvy","Rickets","Night blindness","Beriberi"],"Vitamin C (citrus fruits, amla) prevents scurvy — bleeding gums."],
+["Food & Health","Starch turns ______ with iodine solution.",["Blue-black","Red","Yellow","Violet"],"The iodine test for starch gives a blue-black colour."],
+["Food & Health","Deficiency of iron in food can cause:",["Anaemia","Goitre","Scurvy","Rickets"],"Iron is needed for haemoglobin; less iron → anaemia."],
+["Food & Health","Roughage in our food helps to:",["Prevent constipation","Give energy","Build muscles","Fight disease"],"Roughage (dietary fibre) helps the body get rid of undigested food."],
+["Food & Health","Which nutrient mainly gives us energy?",["Carbohydrates","Vitamins","Minerals","Water"],"Carbohydrates (and fats) are energy-giving foods."],
+["Food & Health","Rickets is caused by deficiency of:",["Vitamin D","Vitamin A","Vitamin C","Vitamin B1"],"Vitamin D helps bones absorb calcium; lack of it causes soft bones (rickets)."],
+["Food & Health","Copper sulphate and caustic soda solutions are used to test for:",["Proteins","Starch","Fats","Vitamins"],"A violet colour shows the presence of protein."],
+["Materials & Separation","Separating husk from grain using wind is called:",["Winnowing","Threshing","Sieving","Sedimentation"],"In winnowing the lighter husk is blown away by wind."],
+["Materials & Separation","Salt is obtained from sea water by:",["Evaporation","Filtration","Condensation","Decantation"],"Sea water is left in shallow pits; the Sun evaporates the water, leaving salt."],
+["Materials & Separation","Which substance dissolves in water?",["Sugar","Sand","Chalk powder","Sawdust"],"Sugar is soluble; the others settle down or float."],
+["Materials & Separation","Picking out small stones from rice by hand is called:",["Handpicking","Winnowing","Sieving","Threshing"],"Handpicking is used when impurities are few and easy to see."],
+["Materials & Separation","Sand can be separated from water by:",["Filtration","Winnowing","Threshing","Magnetic attraction"],"A filter paper lets water pass but holds back the sand."],
+["Materials & Separation","Which material is transparent?",["Clear glass","Wood","Cardboard","Butter paper"],"You can see clearly through transparent objects. Butter paper is translucent."],
+["Materials & Separation","Which liquid does NOT mix with water?",["Oil","Vinegar","Lemon juice","Milk"],"Oil forms a separate layer on top of water."],
+["Changes Around Us","Melting of ice is a ______ change.",["Reversible","Irreversible","Chemical","Permanent"],"Water can be frozen back into ice."],
+["Changes Around Us","Which change can NOT be reversed?",["Burning of paper","Melting of wax","Folding a paper","Stretching a rubber band"],"Burnt paper becomes ash and gases — it cannot become paper again."],
+["Changes Around Us","An iron rim is heated before fitting it on a wooden wheel because:",["Metals expand on heating","Iron becomes soft","It removes rust","It changes colour"],"The rim expands when hot and tightens when it cools."],
+["Plants","Green plants make their food by:",["Photosynthesis","Respiration","Transpiration","Germination"],"Leaves use sunlight, water and carbon dioxide to make food."],
+["Plants","Which plant has fibrous roots?",["Wheat","Mustard","Carrot","Radish"],"Grasses like wheat, maize and rice have fibrous roots."],
+["Plants","Leaves of a cactus are changed into spines to:",["Reduce water loss","Make food","Attract insects","Absorb water"],"Spines have very little surface, so less water evaporates."],
+["Plants","The pattern of veins on a leaf is called:",["Venation","Pollination","Germination","Transpiration"],"Reticulate (net-like) and parallel are the two types of venation."],
+["Plants","Loss of water from leaves as vapour is called:",["Transpiration","Evaporation of soil","Photosynthesis","Respiration"],"Water leaves through tiny pores (stomata) in transpiration."],
+["Plants","Which part of a flower develops into a fruit?",["Ovary","Petal","Sepal","Anther"],"After fertilisation the ovary becomes the fruit."],
+["Plants","Plants with reticulate venation usually have:",["Tap roots","Fibrous roots","No roots","Aerial roots only"],"Net venation ↔ tap root (e.g., mustard); parallel venation ↔ fibrous root."],
+["Body & Movement","The shoulder joint is an example of a:",["Ball and socket joint","Hinge joint","Pivotal joint","Fixed joint"],"The round end of the arm bone fits into a cup — moves in all directions."],
+["Body & Movement","The elbow is an example of a:",["Hinge joint","Ball and socket joint","Pivotal joint","Fixed joint"],"Like a door hinge it moves only back and forth."],
+["Body & Movement","How many bones does an adult human have?",["206","306","106","216"],"An adult skeleton has 206 bones."],
+["Body & Movement","The ribcage protects the:",["Heart and lungs","Brain","Stomach","Kidneys"],"Ribs form a cage around the heart and lungs."],
+["Body & Movement","An earthworm moves with the help of:",["Muscles and tiny bristles","Legs","Wings","Fins"],"Its body expands and contracts; bristles grip the soil."],
+["Body & Movement","A snail moves with the help of a:",["Muscular foot","Pair of legs","Shell","Tail"],"The thick muscular foot glides on slime."],
+["Living Things","Fish have a streamlined body to:",["Move easily in water","Breathe","Store food","Look colourful"],"A pointed, smooth body reduces water resistance."],
+["Living Things","Fish breathe using:",["Gills","Lungs","Skin only","Nostrils"],"Gills take in oxygen dissolved in water."],
+["Living Things","Camels have long legs to:",["Keep the body away from hot sand","Run faster than horses","Climb trees","Swim"],"An adaptation to desert life."],
+["Living Things","A polar bear has thick white fur to:",["Keep warm and blend with snow","Look beautiful","Swim faster","Store water"],"Fur keeps it warm and white colour camouflages it in snow."],
+["Living Things","Animals that live both on land and in water are called:",["Amphibians","Reptiles","Mammals","Aves"],"Frogs and toads are amphibians."],
+["Motion & Measurement","The SI unit of length is:",["Metre","Kilometre","Centimetre","Foot"],"The metre (m) is the standard SI unit."],
+["Motion & Measurement","The motion of a swinging pendulum is:",["Periodic","Rectilinear","Random","Circular only"],"It repeats after a fixed time interval."],
+["Motion & Measurement","A car moving on a straight road shows:",["Rectilinear motion","Circular motion","Periodic motion","Rotational motion"],"Motion along a straight line is rectilinear."],
+["Motion & Measurement","The motion of the blades of a running fan is:",["Circular","Rectilinear","Random","Zig-zag"],"Each point moves in a circle around the centre."],
+["Motion & Measurement","1 kilometre = ?",["1,000 m","100 m","10,000 m","10 m"],"Kilo means thousand."],
+["Motion & Measurement","A handspan is not a standard unit because:",["It differs from person to person","It is too small","It is too large","It cannot be measured"],"Standard units give the same result for everyone."],
+["Light","Which is a non-luminous object?",["The Moon","The Sun","A burning candle","A glowing bulb"],"The Moon reflects sunlight; it does not make its own light."],
+["Light","Shadows are formed because light:",["Travels in a straight line","Bends around objects","Is very fast","Is a colour"],"Light cannot go around an opaque object, so a dark area forms behind it."],
+["Light","The image formed by a pinhole camera is:",["Inverted","Upright","Coloured differently","Larger always"],"Rays cross at the pinhole, so the image is upside down."],
+["Light","Objects that do not allow light to pass through are:",["Opaque","Transparent","Translucent","Luminous"],"Opaque objects form shadows."],
+["Light","The image in a plane mirror is:",["Laterally inverted","Upside down","Smaller","Coloured"],"Left appears right and right appears left."],
+["Electricity & Magnets","Which is a good conductor of electricity?",["Copper","Rubber","Plastic","Wood"],"Metals like copper conduct electricity."],
+["Electricity & Magnets","Which is an insulator?",["Rubber","Iron","Aluminium","Copper"],"Rubber does not let electricity flow — used on wire coverings."],
+["Electricity & Magnets","Like poles of two magnets:",["Repel each other","Attract each other","Do nothing","Stick permanently"],"N–N or S–S repel; N–S attract."],
+["Electricity & Magnets","Which material is attracted by a magnet?",["Iron","Wood","Plastic","Glass"],"Iron, nickel and cobalt are magnetic materials."],
+["Electricity & Magnets","A freely suspended bar magnet always comes to rest in the:",["North–South direction","East–West direction","Up–Down direction","Any direction"],"This property is used in a compass."],
+["Electricity & Magnets","In a dry cell, the metal cap is the:",["Positive (+) terminal","Negative (−) terminal","Switch","Filament"],"Metal cap is +, metal disc at the bottom is −."],
+["Air & Water","Which gas makes up about 78% of air?",["Nitrogen","Oxygen","Carbon dioxide","Argon"],"Air: ~78% nitrogen, ~21% oxygen."],
+["Air & Water","About what percentage of air is oxygen?",["21%","78%","1%","50%"],"Oxygen is about 21% of air."],
+["Air & Water","Water vapour changing into tiny water drops (clouds) is called:",["Condensation","Evaporation","Melting","Freezing"],"Cooling of vapour forms droplets — condensation."],
+["Air & Water","Plants use which gas from air to make food?",["Carbon dioxide","Oxygen","Nitrogen","Hydrogen"],"CO₂ + water + sunlight → food (glucose) + oxygen."],
+["Air & Water","Rainwater harvesting means:",["Collecting and storing rainwater","Boiling rainwater","Stopping rain","Selling water"],"It helps recharge groundwater and save water."]
+],
+english: [
+["Vocabulary","Choose the synonym of 'brave'.",["Courageous","Fearful","Weak","Lazy"],"Brave = courageous, bold."],
+["Vocabulary","Choose the antonym of 'ancient'.",["Modern","Old","Historic","Antique"],"Ancient = very old; opposite is modern."],
+["Vocabulary","The word 'enormous' means:",["Very large","Very small","Very fast","Very old"],"Enormous = huge."],
+["Vocabulary","One who writes poems is called a:",["Poet","Author","Painter","Editor"],"A poet writes poems."],
+["Vocabulary","Choose the synonym of 'begin'.",["Start","Finish","Stop","Pause"],"Begin = start, commence."],
+["Vocabulary","Choose the antonym of 'generous'.",["Selfish","Kind","Giving","Helpful"],"Generous = willing to give; opposite is selfish/mean."],
+["Vocabulary","Something that cannot be seen is:",["Invisible","Visible","Invincible","Indivisible"],"In- (not) + visible = invisible."],
+["Vocabulary","Fill in the correct homophone: 'I can ___ the music.'",["hear","here","hair","heir"],"Hear = to listen; here = this place."],
+["Grammar","What is the plural of 'child'?",["Children","Childs","Childes","Childrens"],"Child → children (irregular plural)."],
+["Grammar","Identify the adjective: 'The tall boy ran fast.'",["tall","boy","ran","fast"],"'Tall' describes the noun 'boy'."],
+["Grammar","Choose the correct pronoun: 'This book is ___.'",["mine","my","me","I"],"Possessive pronoun standing alone: mine."],
+["Grammar","Choose the conjunction: 'I was tired, ___ I kept working.'",["but","and","or","so"],"'But' shows contrast."],
+["Grammar","Identify the adverb: 'She sings beautifully.'",["beautifully","She","sings","—"],"'Beautifully' tells how she sings."],
+["Grammar","Collective noun: a ___ of lions.",["pride","herd","flock","swarm"],"A pride of lions; herd of cattle; flock of sheep; swarm of bees."],
+["Grammar","The comparative form of 'good' is:",["better","gooder","best","more good"],"Good → better → best."],
+["Grammar","The superlative form of 'bad' is:",["worst","worse","baddest","most bad"],"Bad → worse → worst."],
+["Grammar","Neither Ram nor his friends ___ present.",["were","was","is","has"],"With 'neither…nor', the verb agrees with the nearer subject (friends → were)."],
+["Grammar","Which is an abstract noun?",["Honesty","Table","River","Teacher"],"Abstract nouns are qualities or ideas you cannot touch."],
+["Grammar","The opposite gender of 'nephew' is:",["niece","aunt","cousin","sister"],"Nephew ↔ niece."],
+["Verbs & Tenses","She ___ to school every day.",["goes","go","going","gone"],"Simple present, third person singular: goes."],
+["Verbs & Tenses","The past tense of 'teach' is:",["taught","teached","tought","teaching"],"Teach → taught → taught."],
+["Verbs & Tenses","They ___ football when it started raining.",["were playing","are playing","play","have played"],"An action in progress in the past → past continuous."],
+["Verbs & Tenses","I ___ my homework already.",["have finished","finish","finishing","am finish"],"'Already' usually goes with present perfect."],
+["Verbs & Tenses","The past participle of 'write' is:",["written","wrote","writed","writing"],"Write → wrote → written."],
+["Articles & Prepositions","He is ___ honest man.",["an","a","the","no article"],"'Honest' begins with a vowel sound (h is silent), so 'an'."],
+["Articles & Prepositions","The cat is hiding ___ the table.",["under","on","at","between"],"Under = below."],
+["Articles & Prepositions","He is good ___ maths.",["at","in","on","with"],"Good at (a subject or skill)."],
+["Articles & Prepositions","The sun rises ___ the east.",["in","from","at","on"],"Correct usage: 'rises in the east'."],
+["Articles & Prepositions","___ Ganga is a holy river.",["The","A","An","No article"],"Names of rivers take 'the'."],
+["Idioms","'A piece of cake' means:",["Very easy","Very tasty","A small part","A birthday"],"Something that is very easy to do."],
+["Idioms","'Once in a blue moon' means:",["Very rarely","Every night","Monthly","Never"],"Something that happens very rarely."],
+["Idioms","'Break the ice' means:",["Start a conversation in an awkward situation","Break something cold","Fight","Make ice"],"To make people feel more comfortable."],
+["Idioms","'Hit the books' means:",["Study hard","Throw books","Buy books","Sell books"],"To study seriously."],
+["Spelling","Choose the correct spelling.",["Necessary","Neccessary","Necesary","Neccesary"],"One c, double s: ne-c-e-ss-ary."],
+["Spelling","Choose the correct spelling.",["Beautiful","Beautifull","Beutiful","Beatiful"],"B-e-a-u-t-i-f-u-l."],
+["Spelling","Choose the correct spelling.",["Environment","Enviroment","Envirnment","Enviornment"],"Remember the 'n' in enviro-N-ment."],
+["Spelling","Choose the correct spelling.",["February","Febuary","Februery","Febraury"],"Feb-RU-ary."],
+["Sentence Transformation","Passive voice of 'The dog chased the cat.' is:",["The cat was chased by the dog.","The cat chased the dog.","The dog was chased by the cat.","The cat is chased by the dog."],"Object becomes subject; past tense → 'was chased'."],
+["Sentence Transformation","Indirect speech of: He said, \"I am tired.\"",["He said that he was tired.","He said that I am tired.","He says he is tired.","He said that he is tired."],"Pronoun changes (I → he) and tense moves back (am → was)."],
+["Sentence Transformation","Which sentence is punctuated correctly?",["Where are you going?","where are you going?","Where are you going.","Where, are you going?"],"Capital letter at the start and a question mark at the end."],
+["Comprehension","Read: \"The honeybee is a busy insect. It visits hundreds of flowers every day to collect nectar, which it turns into honey. While doing so, it carries pollen from flower to flower and helps plants make seeds.\" — What does the bee collect from flowers?",["Nectar","Seeds","Leaves","Water"],"The passage says it collects nectar."],
+["Comprehension","Read: \"The honeybee is a busy insect. It visits hundreds of flowers every day to collect nectar, which it turns into honey. While doing so, it carries pollen from flower to flower and helps plants make seeds.\" — How does the bee help plants?",["By carrying pollen so plants can make seeds","By eating their leaves","By watering them","By making honey for them"],"Carrying pollen = pollination, which helps form seeds."],
+["Comprehension","Read: \"The honeybee is a busy insect.\" — The word 'busy' is a(n):",["Adjective","Noun","Verb","Adverb"],"'Busy' describes the insect."]
+],
+gk: [
+["India","The national animal of India is the:",["Bengal tiger","Lion","Elephant","Peacock"],"The Bengal tiger has been the national animal since 1973."],
+["India","The national bird of India is the:",["Peacock","Parrot","Sparrow","Eagle"],"The Indian peafowl (peacock)."],
+["India","The national flower of India is the:",["Lotus","Rose","Sunflower","Marigold"],"The lotus."],
+["India","India's national song is:",["Vande Mataram","Jana Gana Mana","Saare Jahan Se Achha","Ae Mere Watan"],"Vande Mataram was written by Bankim Chandra Chatterjee."],
+["India","Who wrote India's national anthem?",["Rabindranath Tagore","Bankim Chandra Chatterjee","Sarojini Naidu","Mahatma Gandhi"],"Tagore wrote 'Jana Gana Mana'."],
+["India","The longest river in India is the:",["Ganga","Yamuna","Godavari","Brahmaputra"],"The Ganga flows about 2,500 km."],
+["India","How many states does India have?",["28","29","26","30"],"India has 28 states and 8 Union Territories."],
+["India","The Taj Mahal is in:",["Agra","Delhi","Jaipur","Lucknow"],"Built by Shah Jahan in Agra, Uttar Pradesh."],
+["India","The smallest state of India by area is:",["Goa","Sikkim","Tripura","Kerala"],"Goa is the smallest by area."],
+["India","The largest desert in India is the:",["Thar","Sahara","Gobi","Kalahari"],"The Thar Desert is mostly in Rajasthan."],
+["India","The headquarters of ISRO is in:",["Bengaluru","Chennai","Hyderabad","Mumbai"],"ISRO is headquartered in Bengaluru."],
+["India","Republic Day is celebrated on:",["26 January","15 August","2 October","14 November"],"The Constitution came into effect on 26 January 1950."],
+["India","The capital of Rajasthan is:",["Jaipur","Jodhpur","Udaipur","Ajmer"],"Jaipur, the Pink City."],
+["World","The capital of Australia is:",["Canberra","Sydney","Melbourne","Perth"],"Canberra, not Sydney!"],
+["World","The currency of Japan is the:",["Yen","Yuan","Won","Dollar"],"Japan — Yen; China — Yuan; Korea — Won."],
+["World","The largest ocean is the:",["Pacific Ocean","Atlantic Ocean","Indian Ocean","Arctic Ocean"],"The Pacific is the biggest and deepest."],
+["World","The largest continent is:",["Asia","Africa","Europe","North America"],"Asia is the largest by area and population."],
+["World","The highest mountain peak in the world is:",["Mount Everest","K2","Kangchenjunga","Mount Kilimanjaro"],"Everest (8,849 m), on the Nepal–China border."],
+["World","The Sahara Desert is in:",["Africa","Asia","Australia","South America"],"The Sahara covers much of North Africa."],
+["World","The longest river in the world is the:",["Nile","Amazon","Ganga","Mississippi"],"The Nile is usually listed as the longest."],
+["Space & Science","The largest planet in our solar system is:",["Jupiter","Saturn","Earth","Neptune"],"Jupiter is more than 11 times wider than Earth."],
+["Space & Science","Which planet is called the Red Planet?",["Mars","Venus","Mercury","Jupiter"],"Iron oxide (rust) makes Mars look red."],
+["Space & Science","The star nearest to Earth is:",["The Sun","Polaris","Sirius","Alpha Centauri"],"The Sun is a star!"],
+["Space & Science","Which planet has the most famous rings?",["Saturn","Mars","Mercury","Venus"],"Saturn's rings are made of ice and rock."],
+["Space & Science","In 2023, Chandrayaan-3 landed near the Moon's:",["South pole","North pole","Equator","Far side centre"],"India became the first country to land near the lunar south pole."],
+["Space & Science","Aditya-L1 is India's mission to study the:",["Sun","Moon","Mars","Venus"],"Aditya means Sun; it was launched in 2023."],
+["Space & Science","The first Indian to travel to space was:",["Rakesh Sharma","Kalpana Chawla","Sunita Williams","Vikram Sarabhai"],"Rakesh Sharma flew in 1984."],
+["History & People","Who is called the Father of the Nation in India?",["Mahatma Gandhi","Jawaharlal Nehru","Subhas Chandra Bose","Sardar Patel"],"Mohandas Karamchand Gandhi."],
+["History & People","The first Prime Minister of India was:",["Jawaharlal Nehru","Indira Gandhi","Lal Bahadur Shastri","Rajendra Prasad"],"Nehru served from 1947 to 1964."],
+["History & People","Who is known as the 'Missile Man of India'?",["Dr A.P.J. Abdul Kalam","Homi Bhabha","C.V. Raman","Vikram Sarabhai"],"Dr Kalam was also the 11th President of India."],
+["History & People","India's national emblem is taken from the Lion Capital at:",["Sarnath","Sanchi","Delhi","Agra"],"Ashoka's Lion Capital at Sarnath."],
+["History & People","Ustad Zakir Hussain was famous for playing the:",["Tabla","Sitar","Flute","Violin"],"He was a world-famous tabla maestro."],
+["Sports","How many players does a hockey team have on the field?",["11","9","7","6"],"11 players including the goalkeeper."],
+["Sports","The Summer Olympic Games are held every:",["4 years","2 years","3 years","5 years"],"Every four years."],
+["Sports","Which city hosted the 2024 Summer Olympics?",["Paris","Tokyo","London","Los Angeles"],"Paris, France hosted in 2024; Los Angeles hosts in 2028."],
+["Sports","Neeraj Chopra is famous in which sport?",["Javelin throw","Badminton","Wrestling","Boxing"],"He won Olympic gold in javelin at Tokyo 2020."],
+["Sports","A shuttlecock is used in:",["Badminton","Tennis","Squash","Table tennis"],"Badminton is played with a shuttlecock."],
+["Inventions","Who invented the telephone?",["Alexander Graham Bell","Thomas Edison","Isaac Newton","Marconi"],"Bell patented the telephone in 1876."],
+["Inventions","Who is credited with inventing the practical electric bulb?",["Thomas Edison","Alexander Graham Bell","James Watt","Michael Faraday"],"Edison made a long-lasting bulb in 1879."],
+["Inventions","Penicillin was discovered by:",["Alexander Fleming","Louis Pasteur","Edward Jenner","Marie Curie"],"Fleming discovered it in 1928."],
+["Inventions","Who gave the law of gravitation?",["Isaac Newton","Albert Einstein","Galileo","Archimedes"],"Newton — the famous falling apple story."],
+["Inventions","Who is known as the father of radio?",["Guglielmo Marconi","J.C. Bose","Edison","Bell"],"Marconi; India's J.C. Bose also did pioneering radio-wave work."]
+],
+hindi: [
+["पर्यायवाची","'सूर्य' का पर्यायवाची शब्द है:",["रवि","चंद्र","तारा","आकाश"],"सूर्य = रवि, दिनकर, भानु।"],
+["पर्यायवाची","'जल' का पर्यायवाची शब्द है:",["नीर","अग्नि","पवन","धरती"],"जल = नीर, पानी, वारि।"],
+["पर्यायवाची","'कमल' का पर्यायवाची शब्द है:",["जलज","जलधि","नीरद","पवन"],"कमल = जलज, पंकज, सरोज।"],
+["पर्यायवाची","'आकाश' का पर्यायवाची शब्द है:",["गगन","धरा","सागर","वन"],"आकाश = गगन, नभ, अंबर।"],
+["पर्यायवाची","'पेड़' का पर्यायवाची शब्द है:",["वृक्ष","पत्ता","फूल","जड़"],"पेड़ = वृक्ष, तरु।"],
+["विलोम","'दिन' का विलोम शब्द है:",["रात","सुबह","दोपहर","शाम"],"दिन × रात।"],
+["विलोम","'अमृत' का विलोम शब्द है:",["विष","जल","दूध","मधु"],"अमृत × विष।"],
+["विलोम","'सुबह' का विलोम शब्द है:",["शाम","दिन","रात","दोपहर"],"सुबह × शाम।"],
+["विलोम","'मित्र' का विलोम शब्द है:",["शत्रु","साथी","सखा","बंधु"],"मित्र × शत्रु।"],
+["विलोम","'सच' का विलोम शब्द है:",["झूठ","सही","सत्य","ठीक"],"सच × झूठ।"],
+["लिंग और वचन","'लड़का' का बहुवचन है:",["लड़के","लड़कों","लड़काएँ","लड़कियाँ"],"आकारांत पुल्लिंग शब्द का बहुवचन 'ए' से बनता है।"],
+["लिंग और वचन","'नदी' का बहुवचन है:",["नदियाँ","नदीयाँ","नदियों","नदीएँ"],"ईकारांत स्त्रीलिंग: ई → इयाँ।"],
+["लिंग और वचन","'शेर' का स्त्रीलिंग है:",["शेरनी","शेरी","शेराइन","शेरानी"],"शेर → शेरनी।"],
+["लिंग और वचन","'घोड़ा' का स्त्रीलिंग है:",["घोड़ी","घोड़िन","घोड़नी","घोड़ीया"],"घोड़ा → घोड़ी।"],
+["लिंग और वचन","'राजा' का स्त्रीलिंग है:",["रानी","राजी","राजिन","राजनी"],"राजा → रानी।"],
+["लिंग और वचन","'पुस्तक' शब्द का लिंग है:",["स्त्रीलिंग","पुल्लिंग","दोनों","कोई नहीं"],"'मेरी पुस्तक' — स्त्रीलिंग।"],
+["लिंग और वचन","'गाय' का बहुवचन है:",["गायें","गायों","गाये","गाइयाँ"],"गाय → गायें।"],
+["संज्ञा और सर्वनाम","'हिमालय' कौन-सी संज्ञा है?",["व्यक्तिवाचक","जातिवाचक","भाववाचक","समूहवाचक"],"किसी विशेष पर्वत का नाम — व्यक्तिवाचक संज्ञा।"],
+["संज्ञा और सर्वनाम","'ईमानदारी' कौन-सी संज्ञा है?",["भाववाचक","व्यक्तिवाचक","जातिवाचक","द्रव्यवाचक"],"गुण या भाव का नाम — भाववाचक संज्ञा।"],
+["संज्ञा और सर्वनाम","'वह खेलता है।' — इस वाक्य में सर्वनाम है:",["वह","खेलता","है","कोई नहीं"],"'वह' संज्ञा के स्थान पर आया है।"],
+["संज्ञा और सर्वनाम","'मैं', 'तुम', 'वह' कौन-से सर्वनाम हैं?",["पुरुषवाचक","निश्चयवाचक","प्रश्नवाचक","संबंधवाचक"],"बोलने, सुनने और अन्य व्यक्ति के लिए — पुरुषवाचक।"],
+["विशेषण और क्रिया","'मीठा आम' में 'मीठा' क्या है?",["विशेषण","संज्ञा","क्रिया","सर्वनाम"],"संज्ञा (आम) की विशेषता बताने वाला शब्द विशेषण है।"],
+["विशेषण और क्रिया","'राम दौड़ता है।' — इस वाक्य में क्रिया है:",["दौड़ता है","राम","है","कोई नहीं"],"काम के होने या करने का बोध कराने वाला शब्द क्रिया है।"],
+["विशेषण और क्रिया","'पढ़ना' किस प्रकार का शब्द है?",["क्रिया","संज्ञा","विशेषण","अव्यय"],"पढ़ना एक काम है — क्रिया।"],
+["विशेषण और क्रिया","'सुंदर लड़की गाती है।' — विशेषण पहचानिए:",["सुंदर","लड़की","गाती","है"],"'सुंदर' लड़की की विशेषता बताता है।"],
+["मुहावरे","'आँखों का तारा' मुहावरे का अर्थ है:",["बहुत प्यारा","आँख की बीमारी","आकाश का तारा","तेज़ नज़र"],"जैसे — बेटा माँ की आँखों का तारा है।"],
+["मुहावरे","'नौ दो ग्यारह होना' का अर्थ है:",["भाग जाना","गिनती करना","जोड़ना","खुश होना"],"चोर पुलिस को देखकर नौ दो ग्यारह हो गया।"],
+["मुहावरे","'दाँतों तले उँगली दबाना' का अर्थ है:",["आश्चर्यचकित होना","दाँत दर्द होना","डर जाना","चुप रहना"],"हैरान होना।"],
+["मुहावरे","'हाथ-पैर फूलना' का अर्थ है:",["घबरा जाना","मोटा होना","चोट लगना","थक जाना"],"डर या घबराहट से कुछ न सूझना।"],
+["वर्तनी","शुद्ध वर्तनी वाला शब्द चुनिए:",["आशीर्वाद","आशिर्वाद","आर्शीवाद","आशीरवाद"],"आ-शी-र्वा-द — 'र्' 'वा' के ऊपर।"],
+["वर्तनी","शुद्ध वर्तनी वाला शब्द चुनिए:",["परीक्षा","परिक्षा","परीछा","परिच्छा"],"प-री-क्षा।"],
+["वर्तनी","'।' विराम चिह्न का नाम है:",["पूर्ण विराम","अल्प विराम","प्रश्नवाचक चिह्न","विस्मयादिबोधक चिह्न"],"वाक्य पूरा होने पर पूर्ण विराम लगता है।"],
+["वर्तनी","'?' चिह्न का नाम है:",["प्रश्नवाचक चिह्न","पूर्ण विराम","अल्प विराम","योजक चिह्न"],"प्रश्न पूछने वाले वाक्य के अंत में।"],
+["शब्द रचना","'विद्यालय' का संधि-विच्छेद है:",["विद्या + आलय","विद्य + आलय","विद्या + लय","विद + यालय"],"आ + आ = आ (दीर्घ संधि)।"],
+["शब्द रचना","'सूर्योदय' का संधि-विच्छेद है:",["सूर्य + उदय","सूर + उदय","सूर्यो + दय","सूर्य + ओदय"],"अ + उ = ओ (गुण संधि)।"],
+["शब्द रचना","'अनपढ़' में उपसर्ग है:",["अन","अ","पढ़","अनप"],"अन + पढ़ = अनपढ़।"],
+["शब्द रचना","'मिठास' में प्रत्यय है:",["आस","मीठ","स","इठास"],"मीठा + आस = मिठास।"],
+["शब्द रचना","'जो ईश्वर में विश्वास रखता हो' — एक शब्द:",["आस्तिक","नास्तिक","धार्मिक","पुजारी"],"ईश्वर में विश्वास न रखने वाला — नास्तिक।"],
+["शब्द रचना","'बहुत अधिक बोलने वाला' — एक शब्द:",["वाचाल","मौन","वक्ता","श्रोता"],"वाचाल = बहुत बोलने वाला।"],
+["शब्द रचना","हिंदी वर्णमाला में कितने स्वर माने जाते हैं?",["11","13","10","33"],"अ, आ, इ, ई, उ, ऊ, ऋ, ए, ऐ, ओ, औ — 11 स्वर।"]
+],
+computers: [
+["Hardware","Which part is called the brain of the computer?",["CPU","Monitor","Keyboard","Mouse"],"The CPU (Central Processing Unit) does all processing."],
+["Hardware","Which is an input device?",["Keyboard","Printer","Monitor","Speaker"],"Input devices send data into the computer."],
+["Hardware","Which is an output device?",["Printer","Mouse","Scanner","Microphone"],"Output devices show or give results."],
+["Hardware","Which is NOT an input device?",["Monitor","Mouse","Scanner","Webcam"],"A monitor displays output."],
+["Hardware","A mouse is a:",["Pointing device","Storage device","Output device","Processing device"],"It moves the pointer on the screen."],
+["Hardware","Hardware means:",["The physical parts of a computer","Programs","The internet","Files"],"Parts you can touch; software is the programs."],
+["Memory & Storage","1 kilobyte (KB) equals:",["1,024 bytes","1,000 bits","100 bytes","1,024 bits"],"Computers count in powers of 2: 2¹⁰ = 1,024."],
+["Memory & Storage","1 byte equals:",["8 bits","4 bits","10 bits","16 bits"],"A byte has 8 bits."],
+["Memory & Storage","The smallest unit of data is a:",["Bit","Byte","Kilobyte","Nibble"],"A bit is a single 0 or 1."],
+["Memory & Storage","Which memory loses its data when power is switched off?",["RAM","ROM","Hard disk","Pen drive"],"RAM is volatile (temporary) memory."],
+["Memory & Storage","Which is the largest?",["1 GB","1 MB","1 KB","1 byte"],"Byte < KB < MB < GB < TB."],
+["Memory & Storage","A pen drive is a:",["Storage device","Input device","Output device","Processor"],"It stores files."],
+["Software & OS","Which is an operating system?",["Windows","MS Word","Google Chrome","Paint"],"Windows, macOS, iPadOS, Linux and Android are operating systems."],
+["Software & OS","Google Chrome and Safari are examples of:",["Web browsers","Operating systems","Antivirus","Games"],"Browsers open websites."],
+["Software & OS","Who is called the Father of the Computer?",["Charles Babbage","Bill Gates","Steve Jobs","Alan Turing"],"Babbage designed the Analytical Engine."],
+["Software & OS","A program that harms a computer is called a:",["Virus","Browser","Driver","Compiler"],"Viruses and malware damage files or steal data."],
+["Shortcuts & Keys","Shortcut to copy is:",["Ctrl + C","Ctrl + V","Ctrl + X","Ctrl + P"],"C = Copy, V = Paste, X = Cut."],
+["Shortcuts & Keys","Shortcut to undo is:",["Ctrl + Z","Ctrl + Y","Ctrl + U","Ctrl + A"],"Ctrl + Z undoes, Ctrl + Y redoes."],
+["Shortcuts & Keys","Shortcut to save a file is:",["Ctrl + S","Ctrl + P","Ctrl + V","Ctrl + N"],"S = Save."],
+["Shortcuts & Keys","Which key deletes the character to the LEFT of the cursor?",["Backspace","Delete","Enter","Shift"],"Delete removes the character to the right."],
+["Shortcuts & Keys","Shortcut to paste is:",["Ctrl + V","Ctrl + C","Ctrl + P","Ctrl + X"],"Ctrl + V pastes."],
+["MS Office","MS Word is a:",["Word processor","Spreadsheet","Presentation program","Game"],"Used for typing documents."],
+["MS Office","In a spreadsheet, the box where a row and a column meet is a:",["Cell","Box","Table","Sheet"],"Each cell has an address like B3."],
+["MS Office","A formula in MS Excel always starts with:",["=","+","#","@"],"Example: =A1+B1."],
+["MS Office","The cell in column C and row 5 has the address:",["C5","5C","CC5","R5C"],"Column letter first, then row number."],
+["MS Office","MS PowerPoint is mainly used to make:",["Presentations","Spreadsheets","Letters","Drawings only"],"Slides for presentations."],
+["MS Office","The default extension of a PowerPoint file is:",[".pptx",".docx",".xlsx",".txt"],"Word — .docx, Excel — .xlsx, PowerPoint — .pptx."],
+["Internet & Safety","URL stands for:",["Uniform Resource Locator","Universal Resource Link","Uniform Region Locator","United Resource Line"],"A URL is a web address."],
+["Internet & Safety","WWW stands for:",["World Wide Web","World Web Wide","Wide World Web","Web World Wide"],"Invented by Tim Berners-Lee."],
+["Internet & Safety","E-mail stands for:",["Electronic mail","Easy mail","Express mail","External mail"],"Electronic mail."],
+["Internet & Safety","Which is the strongest password?",["Tg7#pL2!x","password","12345678","myname"],"Mix of upper/lower letters, numbers and symbols."],
+["Internet & Safety","Fake messages that try to steal your password are called:",["Phishing","Browsing","Chatting","Blogging"],"Never click unknown links or share passwords."],
+["Coding & Numbers","5 in binary is:",["101","110","111","100"],"5 = 4 + 1 = 1×4 + 0×2 + 1×1 → 101."],
+["Coding & Numbers","Binary 1010 in decimal is:",["10","12","8","5"],"8 + 0 + 2 + 0 = 10."],
+["Coding & Numbers","Scratch programming uses:",["Coloured blocks","Only typed code","Punch cards","Voice"],"Blocks snap together like puzzle pieces."],
+["Coding & Numbers","An algorithm is:",["Step-by-step instructions to solve a problem","A computer virus","A type of mouse","A website"],"Like a recipe for a computer."],
+["Coding & Numbers","A loop in a program is used to:",["Repeat steps","Stop the computer","Delete files","Print once"],"e.g., 'repeat 10' in Scratch."]
+],
+reasoning: [
+["Series","Find the next number: 2, 6, 12, 20, 30, ?",["42","40","36","44"],"Differences 4, 6, 8, 10, 12 → 30 + 12 = 42."],
+["Series","Find the next number: 3, 9, 27, 81, ?",["243","162","324","108"],"Each term × 3."],
+["Series","Find the next letter: A, C, E, G, ?",["I","H","J","K"],"Skip one letter each time."],
+["Series","Find the missing number: 1, 4, 9, 16, ?, 36",["25","20","24","30"],"Squares: 1², 2², 3², 4², 5², 6²."],
+["Series","Find the next letter: Z, X, V, T, ?",["R","S","Q","P"],"Going back two letters each time."],
+["Coding-Decoding","If CAT is written as DBU, how is DOG written?",["EPH","CNF","EPI","DPH"],"Each letter moves +1: D→E, O→P, G→H."],
+["Coding-Decoding","If PEN is written as QFO, how is INK written?",["JOL","HMJ","JOK","IOL"],"Each letter +1: I→J, N→O, K→L."],
+["Coding-Decoding","If A = 1, B = 2 … and RED = 27, then BLUE = ?",["40","38","42","36"],"B2 + L12 + U21 + E5 = 40."],
+["Analogy","Book : Author :: Painting : ?",["Artist","Brush","Canvas","Museum"],"An author creates a book; an artist creates a painting."],
+["Analogy","Doctor : Hospital :: Teacher : ?",["School","Book","Student","Class test"],"Place of work."],
+["Analogy","Bird : Fly :: Fish : ?",["Swim","Water","Gills","Fins"],"How each one moves."],
+["Analogy","4 : 16 :: 6 : ?",["36","24","12","30"],"Square of the number: 4² = 16, 6² = 36."],
+["Odd One Out","Find the odd one out: Apple, Mango, Carrot, Banana",["Carrot","Apple","Mango","Banana"],"Carrot is a vegetable; the others are fruits."],
+["Odd One Out","Find the odd one out: 8, 27, 64, 100, 125",["100","8","27","125"],"All others are cubes (2³, 3³, 4³, 5³)."],
+["Odd One Out","Find the odd one out: Square, Triangle, Circle, Cube",["Cube","Square","Triangle","Circle"],"Cube is 3-D; the others are flat (2-D) shapes."],
+["Odd One Out","Find the odd one out: 21, 35, 49, 54",["54","21","35","49"],"All others are multiples of 7."],
+["Directions","Riya walks 5 km north, then turns right. Which direction is she facing now?",["East","West","South","North"],"Right turn from north → east."],
+["Directions","At sunrise, Aman stands facing the Sun. His shadow falls towards the:",["West","East","North","South"],"The Sun rises in the east, so the shadow falls behind him, to the west."],
+["Directions","Facing the rising Sun, your left hand points to the:",["North","South","West","East"],"Face east → left is north, right is south."],
+["Directions","Walk 4 km east, then 3 km north. How far are you from the start?",["5 km","7 km","1 km","6 km"],"Right triangle: √(4² + 3²) = √25 = 5 km."],
+["Blood Relations","Pointing to a boy, Riya says, \"He is the son of my mother's only son.\" The boy is Riya's:",["Nephew","Brother","Son","Cousin"],"Mother's only son = Riya's brother; his son = her nephew."],
+["Blood Relations","Your mother's brother is your:",["Maternal uncle","Paternal uncle","Cousin","Grandfather"],"Mama = maternal uncle; Chacha = paternal uncle."],
+["Blood Relations","A is B's sister. C is A's mother. How is C related to B?",["Mother","Sister","Aunt","Grandmother"],"A and B are siblings, so A's mother is also B's mother."],
+["Ranking & Order","Ravi is 7th from the top and 12th from the bottom in a class. How many students are there?",["18","19","17","20"],"Total = 7 + 12 − 1 = 18."],
+["Ranking & Order","In a row of 25 children, Meena is 10th from the left. What is her position from the right?",["16th","15th","14th","17th"],"25 − 10 + 1 = 16."],
+["Ranking & Order","A is taller than B. B is taller than C. D is taller than A. Who is the tallest?",["D","A","B","C"],"Order: D > A > B > C."],
+["Ranking & Order","Which word comes FIRST in a dictionary?",["Appeal","Apple","Apply","Approve"],"Compare letter by letter: App-e < App-l < App-r."],
+["Ranking & Order","Arrange in a logical order: 1-Seed 2-Plant 3-Fruit 4-Flower",["1, 2, 4, 3","1, 2, 3, 4","2, 1, 4, 3","1, 4, 2, 3"],"Seed → plant → flower → fruit."],
+["Calendar & Clock","If today is Monday, what day will it be after 10 days?",["Thursday","Wednesday","Friday","Tuesday"],"10 = 7 + 3. Monday + 3 days = Thursday."],
+["Calendar & Clock","In a non-leap year, if 1 January is a Sunday, what day is 1 February?",["Wednesday","Tuesday","Thursday","Monday"],"January has 31 days = 4 weeks + 3 days. Sunday + 3 = Wednesday."],
+["Calendar & Clock","How many days are there in a leap year?",["366","365","364","360"],"February gets 29 days."],
+["Calendar & Clock","What angle do the clock hands make at 4 o'clock?",["120°","90°","150°","100°"],"4 × 30° = 120°."],
+["Calendar & Clock","How many times do the hour and minute hands overlap in 12 hours?",["11","12","10","24"],"They overlap 11 times (not 12) in 12 hours."],
+["Math Operations","If '+' means '×' and '×' means '−', then 6 + 3 × 4 = ?",["14","5","36","13"],"Becomes 6 × 3 − 4 = 18 − 4 = 14."],
+["Math Operations","A father is 3 times as old as his 12-year-old son. What will the father's age be after 6 years?",["42","36","48","40"],"Father = 36 now, so 36 + 6 = 42."],
+["Math Operations","How many 7s are immediately followed by 3? 7 3 5 7 3 2 7 1 3 7 3",["3","4","2","5"],"Pairs '7 3' appear at positions 1, 4 and 10 → 3 times."],
+["Math Operations","What is the 5th letter from the right end of the English alphabet?",["V","U","W","E"],"Z(1) Y(2) X(3) W(4) V(5)."]
+]
+};
+
+</script>
+<script>
+"use strict";
+/* ============================== CONFIG ============================== */
+const GRADES = [6]; // add 7 here after adding questions-grade7.js
+const SUBJECTS = [
+  {id:"math",name:"Math",icon:"➗",c:"#4f6bff"},
+  {id:"science",name:"Science",icon:"🔬",c:"#14a37f"},
+  {id:"english",name:"English",icon:"📖",c:"#e0702a"},
+  {id:"gk",name:"General Knowledge",icon:"🌍",c:"#0b9ec0"},
+  {id:"hindi",name:"हिंदी",icon:"अ",c:"#d63f6c",lang:"hi-IN"},
+  {id:"computers",name:"Computers",icon:"💻",c:"#7c4dff"},
+  {id:"reasoning",name:"Logical Reasoning",icon:"🧩",c:"#c08a00"}
+];
+const TIPS = {
+  "Number System":"Revise place value (Indian & International), Roman numerals and estimation. Do 5 'build the smallest/largest number' questions daily.",
+  "Factors & Multiples":"Memorise divisibility rules (2,3,4,5,6,8,9,10,11) and primes up to 50. Practise HCF/LCM by prime factorisation.",
+  "Fractions & Decimals":"Always convert to a common denominator before adding. Line up decimal points. Compare decimals by adding zeros (0.5 = 0.500).",
+  "Integers":"Use a number line. Rule: subtracting a negative = adding. Two negatives added stay negative.",
+  "Algebra":"Practise 'undo' steps: to solve 3x + 4 = 19, subtract 4 then divide by 3. Translate word statements into expressions.",
+  "Ratio & Proportion":"Always simplify ratios with HCF. Use the unitary method: find the value of ONE first, then multiply.",
+  "Geometry":"Learn angle facts (90°, 180°, 360°), types of triangles, symmetry, and faces/edges/vertices of 3-D shapes. Draw a quick figure for every question.",
+  "Mensuration":"Know: Perimeter of rectangle = 2(l+b), Area = l×b, square: 4s and s². Always write units.",
+  "Data Handling":"Practise mean, mode, range and reading pictographs/bar graphs. Count carefully from the key/scale.",
+  "Mental Math":"Learn tables to 20, squares to 25, and tricks like ×25 = ×100÷4, ×5 = ×10÷2. Do a 5-minute speed drill daily.",
+  "Food & Health":"Make a chart: nutrient → source → deficiency disease. Revise food tests (iodine, CuSO₄, paper test).",
+  "Materials & Separation":"Link each method to its use: handpicking, winnowing, sieving, sedimentation, filtration, evaporation. Revise transparent/translucent/opaque.",
+  "Changes Around Us":"Sort examples into reversible vs irreversible changes. Remember expansion/contraction examples.",
+  "Plants":"Label diagrams of leaf, root and flower. Learn tap vs fibrous roots, venation, photosynthesis, transpiration.",
+  "Body & Movement":"Learn joint types with one example each and how animals (earthworm, snail, fish, birds) move.",
+  "Living Things":"Study adaptations by habitat: desert, polar, aquatic, grassland. Ask 'why does this feature help?'.",
+  "Motion & Measurement":"Revise types of motion with examples and SI units/conversions (mm, cm, m, km).",
+  "Light":"Practise luminous/non-luminous, shadows, pinhole camera and mirror images with small activities at home.",
+  "Electricity & Magnets":"Revise conductors vs insulators, circuits, magnet poles and properties. Draw a simple circuit.",
+  "Air & Water":"Know air composition (78% N₂, 21% O₂) and the water cycle steps: evaporation → condensation → precipitation.",
+  "Vocabulary":"Learn 10 new words a day with synonym and antonym. Read a short story daily and note new words.",
+  "Grammar":"Revise parts of speech with 3 examples each. Practise subject–verb agreement, degrees of comparison and plurals.",
+  "Verbs & Tenses":"Make a table of 30 irregular verbs (go-went-gone). Practise identifying the tense from time words (already, yesterday, now).",
+  "Articles & Prepositions":"Remember 'an' goes by vowel SOUND (an hour, a university). Practise in/on/at with time and place.",
+  "Idioms":"Learn 5 idioms a week and use each in your own sentence.",
+  "Spelling":"Write tricky words 3 times, break them into syllables, and do a weekly dictation of 15 words.",
+  "Sentence Transformation":"Practise active↔passive and direct↔indirect speech with simple sentences first; check tense changes.",
+  "Comprehension":"Read the question FIRST, then the passage. Underline key words and find the exact line that answers.",
+  "India":"Revise national symbols, states & capitals, rivers and famous monuments with a map.",
+  "World":"Revise continents, oceans, capitals and currencies of major countries, with a world map.",
+  "Space & Science":"Learn the planets in order with one fact each and India's space missions (Chandrayaan, Aditya-L1, Gaganyaan).",
+  "History & People":"Make flash cards: famous Indian personalities → what they are known for.",
+  "Sports":"Learn team sizes, sport terms and recent major events/winners. Read the sports page once a week.",
+  "Inventions":"Make an inventor → invention table and revise it weekly.",
+  "पर्यायवाची":"रोज़ 5 शब्दों के 3-3 पर्यायवाची लिखें और याद करें।",
+  "विलोम":"विलोम शब्दों की सूची बनाकर रोज़ 10 शब्द दोहराएँ।",
+  "लिंग और वचन":"लिंग और वचन बदलने के नियम (आ→ए, ई→इयाँ) एक तालिका में लिखें और अभ्यास करें।",
+  "संज्ञा और सर्वनाम":"संज्ञा के भेद (व्यक्तिवाचक, जातिवाचक, भाववाचक) और सर्वनाम के भेद उदाहरण सहित दोहराएँ।",
+  "विशेषण और क्रिया":"हर वाक्य में पहले क्रिया, फिर संज्ञा और उसका विशेषण ढूँढने का अभ्यास करें।",
+  "मुहावरे":"हर सप्ताह 5 मुहावरे अर्थ और वाक्य-प्रयोग सहित याद करें।",
+  "वर्तनी":"कठिन शब्दों का श्रुतलेख (dictation) करें; मात्राओं (ि/ी, ु/ू) पर ध्यान दें।",
+  "शब्द रचना":"संधि, उपसर्ग और प्रत्यय के 10-10 उदाहरण लिखें; अनेक शब्दों के लिए एक शब्द दोहराएँ।",
+  "Hardware":"Sort devices into input, output, storage and processing. Label the parts of a computer.",
+  "Memory & Storage":"Memorise: 8 bits = 1 byte, 1024 B = 1 KB … TB. Know RAM vs ROM.",
+  "Software & OS":"Know examples of system vs application software, browsers, and computer pioneers.",
+  "Shortcuts & Keys":"Practise Ctrl + C/V/X/Z/Y/S/P/A on a real computer — doing helps remembering.",
+  "MS Office":"Learn what Word, Excel and PowerPoint do, file extensions and cell addresses. Try a simple Excel formula.",
+  "Internet & Safety":"Learn full forms (URL, WWW, HTTP) and online safety rules: strong passwords, no sharing personal info, beware phishing.",
+  "Coding & Numbers":"Practise decimal↔binary for 0–31 and write small Scratch programs with loops.",
+  "Series":"Find the pattern: check differences, ratios, squares/cubes, or letter positions (A=1 … Z=26).",
+  "Coding-Decoding":"Write A–Z with numbers 1–26 on rough paper and check the shift for each letter.",
+  "Analogy":"Say the relation in words first (\"X is used for Y\"), then apply it to the second pair.",
+  "Odd One Out":"Look for the property shared by most items: category, multiple, shape, type.",
+  "Directions":"Always draw a quick N-E-S-W sketch. Remember: right turn from North = East.",
+  "Blood Relations":"Draw a family tree with + (male) and − (female). Work from the end of the sentence backwards.",
+  "Ranking & Order":"Total = left rank + right rank − 1. Draw a line diagram for comparisons.",
+  "Calendar & Clock":"Use 'odd days' (days ÷ 7 remainder). Each hour on a clock = 30°.",
+  "Math Operations":"Substitute the symbols carefully FIRST, then apply BODMAS."
+};
+
+/* ============================== UTILITIES ============================== */
+const APP_KEY = "olympiad.data.v1", ACTIVE_KEY = "olympiad.active.v1";
+const $ = s => document.querySelector(s);
+const h = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const R = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const pick = a => a[R(0, a.length - 1)];
+const gcd = (a, b) => b ? gcd(b, a % b) : Math.abs(a);
+const fmt = n => Number(n).toLocaleString("en-IN");
+const neg = n => n < 0 ? "−" + Math.abs(n) : String(n);
+const uid = p => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const subjOf = id => SUBJECTS.find(s => s.id === id);
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function hash(str) { let x = 2166136261; for (let i = 0; i < str.length; i++) { x ^= str.charCodeAt(i); x = Math.imul(x, 16777619); } return (x >>> 0).toString(36); }
+function fmtTime(s) { s = Math.max(0, Math.round(s)); const m = Math.floor(s / 60); return `${m}:${String(s % 60).padStart(2, "0")}`; }
+function fmtDate(iso) { try { return new Date(iso).toLocaleString("en-IN", {day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}); } catch (e) { return iso; } }
+function dayKey(d) { d = new Date(d); return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate(); }
+
+/* ============================== DATA ============================== */
+function defaultData() {
+  return { version: 1,
+    settings: { practiceCount: 10, examCount: 25, examMinutes: 30, passPct: 60, distinctionPct: 85, autoRead: false },
+    profiles: [{ id: "p1", name: "My Child", grade: 6 }], activeProfile: "p1", progress: {}, attempts: [] };
+}
+function loadData() {
+  try { const raw = localStorage.getItem(APP_KEY); if (raw) { const d = JSON.parse(raw); const def = defaultData(); d.settings = Object.assign(def.settings, d.settings || {}); d.progress = d.progress || {}; d.attempts = d.attempts || []; if (!d.profiles || !d.profiles.length) { d.profiles = def.profiles; d.activeProfile = "p1"; } return d; } } catch (e) {}
+  return defaultData();
+}
+function save() { try { localStorage.setItem(APP_KEY, JSON.stringify(S.data)); } catch (e) { alert("Could not save progress on this device (storage full or blocked). Please download a backup from Settings."); } }
+function saveActive() { try { if (S.quiz && !S.quiz.done) localStorage.setItem(ACTIVE_KEY, JSON.stringify(S.quiz)); else localStorage.removeItem(ACTIVE_KEY); } catch (e) {} }
+function profile() { return S.data.profiles.find(p => p.id === S.data.activeProfile) || S.data.profiles[0]; }
+function grade() { return profile().grade || 6; }
+function prog(subj, pid = profile().id, g = grade()) {
+  const P = S.data.progress; P[pid] = P[pid] || {}; P[pid][g] = P[pid][g] || {};
+  return P[pid][g][subj] = P[pid][g][subj] || { topics: {}, seen: {}, wrong: {} };
+}
+
+/* ============================== QUESTION BANK ============================== */
+const _bankCache = {};
+function bankFor(subj, g = grade()) {
+  const key = g + subj; if (_bankCache[key]) return _bankCache[key];
+  const raw = ((window.QB || {})[g] || {})[subj] || [];
+  return _bankCache[key] = raw.map(r => ({ id: `${g}-${subj}-${hash(r[1] + "|" + r[2][0])}`, t: r[0], q: r[1], opts: r[2], e: r[3] }));
+}
+function topicsFor(subj) {
+  const list = []; bankFor(subj).forEach(q => { if (!list.includes(q.t)) list.push(q.t); });
+  (GEN[subj] || []).forEach(g => { if (!list.includes(g.t)) list.push(g.t); });
+  return list;
+}
+function prepare(item) {
+  const correct = item.opts[0]; const o = shuffle(item.opts);
+  return { id: item.id, t: item.t, q: item.q, o, a: o.indexOf(correct), e: item.e, gen: !!item.gen };
+}
+
+/* ---------- auto-generated questions (unlimited practice) ---------- */
+const DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const GEN = {
+  math: [
+    { t: "Mental Math", f: () => { const a = R(12, 99), b = R(3, 9), p = a * b; return { q: `${a} × ${b} = ?`, c: fmt(p), d: [p + b, p - b, p + 10, p - 10, p + 1].map(fmt), e: `(${a - a % 10} × ${b}) + (${a % 10} × ${b}) = ${(a - a % 10) * b} + ${(a % 10) * b} = ${p}.` }; } },
+    { t: "Mental Math", f: () => { const a = R(120, 899), b = R(105, 699); return { q: `${a} + ${b} = ?`, c: a + b, d: [a + b + 10, a + b - 10, a + b + 100, a + b - 1, a + b + 1], e: `Add hundreds, tens and ones separately: ${a} + ${b} = ${a + b}.` }; } },
+    { t: "Factors & Multiples", f: () => { const g = R(2, 12); let x, y; do { x = R(2, 9); y = R(2, 9); } while (x === y || gcd(x, y) !== 1); const a = g * x, b = g * y; return { q: `What is the HCF of ${a} and ${b}?`, c: g, d: [g * 2, g + 1, Math.max(1, g - 1), g * x, 1, g * 3], e: `${a} = ${g} × ${x} and ${b} = ${g} × ${y}. ${x} and ${y} have no common factor, so HCF = ${g}.` }; } },
+    { t: "Factors & Multiples", f: () => { let x, y; do { x = R(4, 15); y = R(4, 15); } while (x === y); const l = x * y / gcd(x, y); return { q: `What is the LCM of ${x} and ${y}?`, c: l, d: [x * y, l * 2, gcd(x, y), l + x, l - y, l + 1].filter(v => v > 0), e: `LCM = (${x} × ${y}) ÷ HCF(${gcd(x, y)}) = ${l}.` }; } },
+    { t: "Fractions & Decimals", f: () => { const q = pick([2, 3, 4, 5, 6, 8, 10]); let p; do { p = R(1, q - 1); } while (gcd(p, q) !== 1); const n = q * R(2, 12), ans = p * n / q; return { q: `What is ${p}/${q} of ${n}?`, c: ans, d: [n / q, ans + n / q, n - ans, ans * 2, ans + 1].filter(v => v > 0 && v !== ans), e: `${n} ÷ ${q} = ${n / q}, then × ${p} = ${ans}.` }; } },
+    { t: "Fractions & Decimals", f: () => { const a = R(11, 99) / 10, b = R(101, 999) / 100, s = +(a + b).toFixed(2); return { q: `${a.toFixed(1)} + ${b.toFixed(2)} = ?`, c: s.toFixed(2), d: [(s + 0.1).toFixed(2), (s - 0.1).toFixed(2), (s + 1).toFixed(2), (a * 10 + b).toFixed(2), (s - 1).toFixed(2)], e: `Line up the decimal points: ${a.toFixed(2)} + ${b.toFixed(2)} = ${s.toFixed(2)}.` }; } },
+    { t: "Integers", f: () => { const a = R(-20, 20), b = R(-20, -1), c = R(1, 15), ans = a + b - c; return { q: `${neg(a)} + (${neg(b)}) − ${c} = ?`, c: neg(ans), d: [ans + 2 * c, a - b - c, -ans, ans + 1, ans - 1].filter(v => v !== ans).map(neg), e: `${neg(a)} + (${neg(b)}) = ${neg(a + b)}; then ${neg(a + b)} − ${c} = ${neg(ans)}.` }; } },
+    { t: "Algebra", f: () => { const x = R(2, 15), a = R(2, 9), b = R(1, 20), c = a * x + b; return { q: `If ${a}x + ${b} = ${c}, find x.`, c: x, d: [x + 1, x - 1, x + 2, c - b, Math.round(c / a)].filter(v => v !== x && v > 0), e: `${a}x = ${c} − ${b} = ${c - b}, so x = ${c - b} ÷ ${a} = ${x}.` }; } },
+    { t: "Mensuration", f: () => { const l = R(5, 20), b = R(2, l - 1), area = Math.random() < .5; return area ? { q: `Find the area of a rectangle ${l} cm long and ${b} cm wide.`, c: `${l * b} cm²`, d: [`${2 * (l + b)} cm²`, `${l * b + l} cm²`, `${l + b} cm²`, `${l * b - b} cm²`], e: `Area = l × b = ${l} × ${b} = ${l * b} cm².` } : { q: `Find the perimeter of a rectangle ${l} cm long and ${b} cm wide.`, c: `${2 * (l + b)} cm`, d: [`${l * b} cm`, `${l + b} cm`, `${2 * l + b} cm`, `${2 * (l + b) + 2} cm`], e: `Perimeter = 2(l + b) = 2(${l} + ${b}) = ${2 * (l + b)} cm.` }; } },
+    { t: "Ratio & Proportion", f: () => { const k = R(3, 9), u = R(5, 40); let m; do { m = R(2, 15); } while (m === k); return { q: `${k} notebooks cost ₹${k * u}. What is the cost of ${m} notebooks?`, c: `₹${m * u}`, d: [`₹${m * u + u}`, `₹${m * u - u}`, `₹${k * u + m}`, `₹${m * k}`, `₹${(m + 1) * u + 5}`], e: `Cost of 1 = ${k * u} ÷ ${k} = ₹${u}. Cost of ${m} = ${m} × ${u} = ₹${m * u}.` }; } }
+  ],
+  reasoning: [
+    { t: "Series", f: () => { const s = R(2, 30), d = R(3, 12), t = [0, 1, 2, 3, 4].map(i => s + i * d), n = s + 5 * d; return { q: `Find the next number: ${t.join(", ")}, ?`, c: n, d: [n + 1, n - 1, n + d, n - d, n + 2], e: `Add ${d} each time: ${t[4]} + ${d} = ${n}.` }; } },
+    { t: "Series", f: () => { const s = R(1, 5), r = R(2, 3), t = [0, 1, 2, 3].map(i => s * r ** i), n = s * r ** 4; return { q: `Find the next number: ${t.join(", ")}, ?`, c: n, d: [n + t[3], n - r, t[3] + (t[3] - t[2]), n * r, n + 1], e: `Multiply by ${r} each time: ${t[3]} × ${r} = ${n}.` }; } },
+    { t: "Series", f: () => { const st = R(0, 8), sp = R(2, 4), L = i => String.fromCharCode(65 + i), t = [0, 1, 2, 3].map(i => L(st + i * sp)), n = st + 4 * sp; return { q: `Find the next letter: ${t.join(", ")}, ?`, c: L(n), d: [L(n + 1), L(n - 1), L(n + 2), L(n - 2)], e: `Each letter moves ${sp} places forward, so after ${t[3]} comes ${L(n)}.` }; } },
+    { t: "Calendar & Clock", f: () => { const d0 = R(0, 6), n = R(8, 60), ans = DAYS[(d0 + n) % 7]; return { q: `If today is ${DAYS[d0]}, what day will it be after ${n} days?`, c: ans, d: [DAYS[(d0 + n + 1) % 7], DAYS[(d0 + n + 6) % 7], DAYS[(d0 + n + 2) % 7], DAYS[(d0 + n + 5) % 7]], e: `${n} ÷ 7 leaves remainder ${n % 7}. ${DAYS[d0]} + ${n % 7} day(s) = ${ans}.` }; } },
+    { t: "Calendar & Clock", f: () => { const hh = R(1, 11), a = Math.min(30 * hh, 360 - 30 * hh); return { q: `What is the smaller angle between the clock hands at ${hh} o'clock?`, c: `${a}°`, d: [`${a + 30}°`, `${Math.abs(a - 30) || 15}°`, `${360 - a}°`, `${a + 15}°`, `${a + 60}°`], e: `Each hour gap = 30°. ${hh} × 30° = ${30 * hh}°${30 * hh > 180 ? `; smaller angle = 360° − ${30 * hh}° = ${a}°` : ""}.` }; } },
+    { t: "Coding-Decoding", f: () => { const W = ["SUN","MAP","BOX","CUP","PEN","HAT","DOG","FAN","JAR","KITE","LAMP","BELL","NEST","FROG"]; const k = R(1, 3); let w1 = pick(W), w2; do { w2 = pick(W); } while (w2 === w1); const enc = (w, s) => w.split("").map(c => String.fromCharCode((c.charCodeAt(0) - 65 + s + 26) % 26 + 65)).join(""); return { q: `If ${w1} is written as ${enc(w1, k)}, how is ${w2} written?`, c: enc(w2, k), d: [enc(w2, k + 1), enc(w2, -k), enc(w2, k - 1 || 4), enc(w2, k + 2)], e: `Each letter moves ${k} place(s) forward in the alphabet.` }; } }
+  ]
+};
+function makeGen(subj, topics) {
+  const gens = (GEN[subj] || []).filter(g => !topics || !topics.length || topics.includes(g.t));
+  if (!gens.length) return null;
+  const g = pick(gens), x = g.f(), c = String(x.c), d = [];
+  for (const v of x.d) { const s = String(v); if (s !== c && !d.includes(s) && s !== "NaN") d.push(s); if (d.length === 3) break; }
+  let k = 1; const base = parseFloat(c.replace(/[^\d.\-]/g, ""));
+  while (d.length < 3) { const s = isNaN(base) ? c + k : String(base + k * 7); if (!d.includes(s) && s !== c) d.push(s); k++; }
+  return { id: "gen-" + uid(""), t: g.t, q: x.q, opts: [c, ...d], e: x.e, gen: true };
+}
+
+/* ============================== WEAKNESS ANALYSIS ============================== */
+function topicStatus(ts) {
+  if (!ts || !ts.r || ts.r.length < 3) return { s: "new", label: "Not enough data", acc: ts && ts.r && ts.r.length ? Math.round(100 * ts.r.reduce((a, b) => a + b, 0) / ts.r.length) : null };
+  const acc = Math.round(100 * ts.r.reduce((a, b) => a + b, 0) / ts.r.length);
+  return { s: acc < 50 ? "weak" : acc < 75 ? "improving" : "strong", label: acc < 50 ? "Needs work" : acc < 75 ? "Improving" : "Strong", acc };
+}
+function analyse(subj) {
+  const p = prog(subj);
+  const rows = topicsFor(subj).map(t => { const ts = p.topics[t]; const st = topicStatus(ts); return { t, a: ts ? ts.a : 0, c: ts ? ts.c : 0, n: ts && ts.r ? ts.r.length : 0, ...st }; });
+  const order = { weak: 0, improving: 1, new: 2, strong: 3 };
+  rows.sort((x, y) => order[x.s] - order[y.s] || (x.acc ?? 101) - (y.acc ?? 101));
+  const totA = rows.reduce((s, r) => s + r.a, 0), totC = rows.reduce((s, r) => s + r.c, 0);
+  return { rows, answered: totA, acc: totA ? Math.round(100 * totC / totA) : null, weak: rows.filter(r => r.s === "weak"), improving: rows.filter(r => r.s === "improving"), strong: rows.filter(r => r.s === "strong"), untried: rows.filter(r => r.s === "new") };
+}
+function coachSummary(subj, A) {
+  if (!A.answered) return "No practice yet. Start with a 10-question practice to discover strengths and weak areas.";
+  const parts = [];
+  if (A.weak.length) parts.push(`Focus first on <b>${A.weak.slice(0, 3).map(r => `${h(r.t)} (${r.acc}%)`).join(", ")}</b>.`);
+  if (A.improving.length) parts.push(`Keep practising <b>${A.improving.slice(0, 3).map(r => h(r.t)).join(", ")}</b> to reach 75%+.`);
+  if (A.strong.length) parts.push(`Strong in <b>${A.strong.slice(0, 3).map(r => h(r.t)).join(", ")}</b> 👏.`);
+  if (A.untried.length) parts.push(`Not tried enough yet: ${A.untried.slice(0, 4).map(r => h(r.t)).join(", ")}${A.untried.length > 4 ? "…" : ""}.`);
+  return parts.join(" ");
+}
+
+/* ============================== STATE ============================== */
+const S = { data: loadData(), tab: "home", subj: null, topicSel: [], quiz: null, screen: "tabs", result: null, weakSubj: "math", histFilter: "all", reviewOnlyWrong: false, timer: null, pending: null };
+try { const a = localStorage.getItem(ACTIVE_KEY); if (a) S.pending = JSON.parse(a); } catch (e) {}
+
+/* ============================== QUIZ ENGINE ============================== */
+const MODE_LABEL = { practice: "Practice", exam: "Mock Exam", weak: "Weak-area drill", mistakes: "Fix my mistakes" };
+function buildQuestions(subj, mode, topics) {
+  const set = S.data.settings, p = prog(subj);
+  const count = mode === "exam" ? +set.examCount : +set.practiceCount;
+  let bank = bankFor(subj);
+  if (mode === "weak") {
+    const A = analyse(subj); let wt = [...A.weak, ...A.improving].map(r => r.t);
+    if (!wt.length) wt = A.untried.map(r => r.t);
+    if (!wt.length) wt = A.rows.slice(0, 3).map(r => r.t);
+    topics = wt;
+  }
+  if (mode === "mistakes") bank = bank.filter(q => p.wrong[q.id]);
+  else if (topics && topics.length) bank = bank.filter(q => topics.includes(q.t));
+  // least-seen first so the child sees new questions before repeats
+  const ordered = shuffle(bank).sort((a, b) => (p.seen[a.id] || 0) - (p.seen[b.id] || 0));
+  const hasGen = mode !== "mistakes" && (GEN[subj] || []).some(g => !topics || !topics.length || topics.includes(g.t));
+  let nGen = hasGen ? Math.max(count - ordered.length, Math.round(count * 0.3)) : 0;
+  nGen = Math.min(nGen, count);
+  const items = ordered.slice(0, count - nGen);
+  for (let i = 0; i < nGen; i++) { const g = makeGen(subj, topics); if (g) items.push(g); }
+  return shuffle(items).map(prepare);
+}
+function startQuiz(subj, mode, topics) {
+  const qs = buildQuestions(subj, mode, topics);
+  if (!qs.length) { alert(mode === "mistakes" ? "No saved mistakes in this subject. Great job! 🎉" : "No questions available for this selection."); return; }
+  const set = S.data.settings;
+  S.quiz = { id: uid("q"), pid: profile().id, grade: grade(), subj, mode, topics: topics || [], qs, ans: qs.map(() => null), i: 0, started: Date.now(),
+    ends: mode === "exam" ? Date.now() + set.examMinutes * 60000 : null, done: false };
+  S.pending = null; S.screen = "quiz"; saveActive(); startTimer(); render(); window.scrollTo(0, 0);
+  if (set.autoRead) speakQ();
+}
+function resumeQuiz() {
+  const q = S.pending; if (!q) return;
+  if (q.pid !== profile().id) { S.data.activeProfile = q.pid; save(); }
+  S.quiz = q; S.pending = null; S.screen = "quiz";
+  if (q.mode === "exam" && q.ends && Date.now() > q.ends) { finishQuiz(true); return; }
+  startTimer(); render();
+}
+function startTimer() {
+  clearInterval(S.timer);
+  if (!S.quiz || !S.quiz.ends) return;
+  S.timer = setInterval(() => {
+    const left = (S.quiz.ends - Date.now()) / 1000, el = $("#timer");
+    if (el) { el.textContent = "⏱ " + fmtTime(left); el.classList.toggle("low", left < 120); }
+    if (left <= 0) finishQuiz(true);
+  }, 1000);
+}
+function choose(k) {
+  const Q = S.quiz; if (!Q || Q.done) return;
+  const instant = Q.mode !== "exam";
+  if (instant && Q.ans[Q.i] !== null) return; // locked after first tap in practice
+  Q.ans[Q.i] = k; saveActive(); render();
+}
+function go(i) { const Q = S.quiz; Q.i = Math.max(0, Math.min(Q.qs.length - 1, i)); saveActive(); render(); window.scrollTo(0, 0); if (S.data.settings.autoRead) speakQ(); }
+function finishQuiz(auto) {
+  const Q = S.quiz; if (!Q || Q.done) return;
+  const unanswered = Q.ans.filter(a => a === null).length;
+  if (!auto && Q.mode === "exam" && unanswered && !confirm(`${unanswered} question(s) not answered. Submit anyway?`)) return;
+  if (!auto && Q.mode !== "exam" && unanswered && !confirm(`End now? ${unanswered} unanswered question(s) will not be counted.`)) return;
+  clearInterval(S.timer); Q.done = true;
+  const set = S.data.settings, p = prog(Q.subj, Q.pid, Q.grade);
+  let right = 0, wrong = 0, skipped = 0; const now = Date.now();
+  const items = Q.qs.map((q, i) => {
+    const ch = Q.ans[i];
+    if (ch === null) { skipped++; return { ...q, ch }; }
+    const ok = ch === q.a; ok ? right++ : wrong++;
+    const ts = p.topics[q.t] = p.topics[q.t] || { a: 0, c: 0, r: [] };
+    ts.a++; if (ok) ts.c++; ts.r.push(ok ? 1 : 0); if (ts.r.length > 20) ts.r.shift();
+    if (!q.gen) { p.seen[q.id] = (p.seen[q.id] || 0) + 1; if (ok) delete p.wrong[q.id]; else p.wrong[q.id] = { n: ((p.wrong[q.id] || {}).n || 0) + 1, last: now }; }
+    return { ...q, ch };
+  });
+  const total = Q.qs.length, pct = Math.round(100 * right / total);
+  const prof = S.data.profiles.find(x => x.id === Q.pid) || profile();
+  const att = { id: uid("a"), pid: Q.pid, name: prof.name, grade: Q.grade, subj: Q.subj, mode: Q.mode, topics: Q.topics, date: new Date().toISOString(),
+    secs: Math.round((now - Q.started) / 1000), total, right, wrong, skipped, pct,
+    passed: Q.mode === "exam" ? pct >= set.passPct : null, distinction: Q.mode === "exam" ? pct >= set.distinctionPct : null, items };
+  S.data.attempts.unshift(att);
+  if (S.data.attempts.length > 400) S.data.attempts.length = 400;
+  save(); S.quiz = null; saveActive();
+  S.result = att; S.screen = "result"; render(); window.scrollTo(0, 0);
+}
+function quitQuiz() {
+  if (!confirm("Leave this test? You can resume it later from Home.")) return;
+  clearInterval(S.timer); S.pending = S.quiz; saveActive(); S.quiz = null; S.screen = "tabs"; render();
+}
+
+/* ============================== SPEECH ============================== */
+function speak(text, lang) {
+  if (!("speechSynthesis" in window)) { alert("Read-aloud is not supported in this browser."); return; }
+  speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = lang || "en-IN"; u.rate = .92;
+  const v = speechSynthesis.getVoices().find(v => v.lang && v.lang.replace("_", "-").toLowerCase().startsWith(u.lang.slice(0, 2).toLowerCase())); if (v) u.voice = v;
+  speechSynthesis.speak(u);
+}
+function speakQ() {
+  const Q = S.quiz; if (!Q) return; const q = Q.qs[Q.i], s = subjOf(Q.subj);
+  speak(q.q + ". " + q.o.map((o, i) => (s.lang === "hi-IN" ? "विकल्प " : "Option ") + "ABCD"[i] + ": " + o).join(". "), s.lang);
+}
+
+/* ============================== RENDER ============================== */
+function render() {
+  renderTop();
+  const main = $("#main"), tb = $("#tabbar");
+  tb.style.display = S.screen === "tabs" ? "" : "none";
+  if (S.screen === "quiz") main.innerHTML = viewQuiz();
+  else if (S.screen === "result") main.innerHTML = viewResult(S.result);
+  else if (S.screen === "review") main.innerHTML = viewReview(S.result);
+  else if (S.screen === "cert") main.innerHTML = viewCert(S.result);
+  else {
+    tb.innerHTML = [["home","🏠","Home"],["practice","✏️","Practice"],["weak","🎯","Weak Areas"],["history","📊","History"],["settings","⚙️","Settings"]]
+      .map(([k, ic, l]) => `<button class="${S.tab === k ? "on" : ""}" data-act="tab" data-v="${k}"><span class="ic">${ic}</span>${l}</button>`).join("");
+    main.innerHTML = { home: viewHome, practice: viewPractice, weak: viewWeak, history: viewHistory, settings: viewSettings }[S.tab]();
+  }
+}
+function renderTop() {
+  const p = profile();
+  $("#top").innerHTML = `<div class="logo">🏆</div><div class="grow"><h1>Olympiad Practice</h1><div class="sub">Grade ${grade()} · ${h(p.name)}</div></div>
+    ${S.screen === "tabs" ? `<select data-act="profile" aria-label="Child">${S.data.profiles.map(x => `<option value="${h(x.id)}" ${x.id === p.id ? "selected" : ""}>${h(x.name)} (Gr ${x.grade})</option>`).join("")}</select>` : ""}`;
+}
+function subjCard(s, extra = "") {
+  const A = analyse(s.id), acc = A.acc;
+  const weakest = A.weak[0] || A.improving[0];
+  return `<button class="subj" style="--c:${s.c}" data-act="open-subj" data-v="${s.id}">
+    <div class="row between" style="width:100%"><div class="ic">${s.icon}</div>${acc !== null ? `<span class="pill ${acc < 50 ? "weak" : acc < 75 ? "improving" : "strong"}">${acc}%</span>` : `<span class="pill new">New</span>`}</div>
+    <div class="nm">${h(s.name)}</div>
+    <div class="bar"><span style="width:${acc ?? 0}%"></span></div>
+    <div class="meta">${A.answered ? `${A.answered} answered${weakest ? ` · Weak: ${h(weakest.t)}` : ""}` : `${bankFor(s.id).length}+ questions · ${topicsFor(s.id).length} topics`}</div>${extra}
+  </button>`;
+}
+function viewHome() {
+  const atts = S.data.attempts.filter(a => a.pid === profile().id && a.grade === grade());
+  const answered = atts.reduce((s, a) => s + a.right + a.wrong, 0), right = atts.reduce((s, a) => s + a.right, 0);
+  const days = new Set(atts.map(a => dayKey(a.date))); let streak = 0; const d = new Date();
+  if (!days.has(dayKey(d))) d.setDate(d.getDate() - 1);
+  while (days.has(dayKey(d))) { streak++; d.setDate(d.getDate() - 1); }
+  const passed = atts.filter(a => a.passed).length;
+  const weakAll = SUBJECTS.flatMap(s => analyse(s.id).weak.map(r => ({ ...r, s }))).sort((a, b) => a.acc - b.acc).slice(0, 5);
+  return `<div class="stack">
+    ${S.pending ? `<div class="notice row between"><div><b>Unfinished ${MODE_LABEL[S.pending.mode]}</b> — ${h(subjOf(S.pending.subj).name)}, question ${S.pending.i + 1} of ${S.pending.qs.length}</div><div class="row"><button class="btn" data-act="resume">Resume</button><button class="btn ghost" data-act="discard">Discard</button></div></div>` : ""}
+    <div class="grid tiles">
+      <div class="card tile"><div class="v">${answered}</div><div class="l">Questions answered</div></div>
+      <div class="card tile"><div class="v">${answered ? Math.round(100 * right / answered) + "%" : "–"}</div><div class="l">Overall accuracy</div></div>
+      <div class="card tile"><div class="v">${streak} 🔥</div><div class="l">Day streak</div></div>
+      <div class="card tile"><div class="v">${passed} 🏅</div><div class="l">Mock exams passed</div></div>
+    </div>
+    <h2 class="section-title">Select Subject</h2>
+    <div class="grid">${SUBJECTS.map(s => subjCard(s)).join("")}</div>
+    <div class="card">
+      <div class="row between"><h3>🎯 Top weak areas across subjects</h3><button class="btn ghost" data-act="tab" data-v="weak">Full report</button></div>
+      ${weakAll.length ? weakAll.map(r => `<div class="list-item"><div class="ic" style="font-size:1.4rem">${r.s.icon}</div><div class="grow"><b>${h(r.t)}</b> <span class="muted small">· ${h(r.s.name)}</span><div class="bar" style="--c:var(--bad);margin-top:6px"><span style="width:${r.acc}%"></span></div></div><span class="pill weak">${r.acc}%</span><button class="btn" data-act="drill" data-s="${r.s.id}" data-t="${h(r.t)}">Drill</button></div>`).join("")
+        : `<p class="muted">No weak areas found yet. Topics are marked "Needs work" when accuracy over the last attempts is below 50% (at least 3 questions answered).</p>`}
+    </div>
+  </div>`;
+}
+function viewPractice() {
+  if (!S.subj) return `<div class="stack"><h2 class="section-title">Select Subject</h2><div class="grid">${SUBJECTS.map(s => subjCard(s)).join("")}</div></div>`;
+  const s = subjOf(S.subj), topics = topicsFor(S.subj), p = prog(S.subj), set = S.data.settings;
+  const nWrong = bankFor(S.subj).filter(q => p.wrong[q.id]).length, A = analyse(S.subj);
+  return `<div class="stack">
+    <div class="row"><button class="btn ghost" data-act="back-subj">← Subjects</button><h2 style="font-size:1.5rem">${s.icon} ${h(s.name)}</h2></div>
+    <div class="card">
+      <div class="row between"><h3>Topics</h3><button class="btn line" data-act="topic-all">${S.topicSel.length ? "Clear selection" : "All topics"}</button></div>
+      <p class="muted small" style="margin:6px 0 12px">Tap topics to practise only those. Nothing selected = all topics.</p>
+      <div class="chips">${topics.map(t => { const st = topicStatus(p.topics[t]); return `<button class="chip ${S.topicSel.includes(t) ? "on" : ""}" data-act="topic" data-v="${h(t)}">${h(t)}${st.acc !== null ? ` · ${st.acc}%` : ""}</button>`; }).join("")}</div>
+    </div>
+    <div class="grid">
+      <button class="mode" data-act="start" data-v="practice"><span class="ic">✏️</span><div><b>Practice</b><span>${set.practiceCount} questions · answer and explanation shown instantly</span></div></button>
+      <button class="mode" data-act="start" data-v="exam"><span class="ic">⏱️</span><div><b>Mock Exam</b><span>${set.examCount} questions · ${set.examMinutes} min timer · pass ${set.passPct}% · certificate</span></div></button>
+      <button class="mode" data-act="start" data-v="weak"><span class="ic">🎯</span><div><b>Weak-area drill</b><span>${A.weak.length + A.improving.length ? `Targets: ${h([...A.weak, ...A.improving].slice(0, 3).map(r => r.t).join(", "))}` : "Targets the topics you haven't mastered"}</span></div></button>
+      <button class="mode" data-act="start" data-v="mistakes" ${nWrong ? "" : "disabled style='opacity:.5'"}><span class="ic">🔁</span><div><b>Fix my mistakes</b><span>${nWrong} question(s) answered wrongly before</span></div></button>
+    </div>
+    <div class="card"><div class="row between"><h3>Coach's note</h3><button class="btn ghost" data-act="weak-open" data-v="${s.id}">Weak-area report →</button></div><p style="margin:8px 0 0">${coachSummary(s.id, A)}</p></div>
+  </div>`;
+}
+function viewQuiz() {
+  const Q = S.quiz, q = Q.qs[Q.i], s = subjOf(Q.subj), exam = Q.mode === "exam", ch = Q.ans[Q.i], shown = !exam && ch !== null;
+  const answered = Q.ans.filter(a => a !== null).length, last = Q.i === Q.qs.length - 1;
+  const long = q.o.some(o => o.length > 28);
+  return `<div class="quiz stack">
+    <div class="card">
+      <div class="qhead"><button class="btn ghost" data-act="quit">✕ Exit</button>
+        <div class="grow" style="flex:1"><b>${s.icon} ${h(s.name)}</b> <span class="muted">· ${MODE_LABEL[Q.mode]}</span><div class="muted small">Question ${Q.i + 1} of ${Q.qs.length} · ${answered} answered</div></div>
+        ${exam ? `<span class="timer" id="timer">⏱ ${fmtTime((Q.ends - Date.now()) / 1000)}</span>` : ""}
+        <button class="btn ghost" data-act="speak" aria-label="Read aloud">🔊</button></div>
+      <div class="bar" style="--c:${s.c};margin-top:14px"><span style="width:${100 * (Q.i + 1) / Q.qs.length}%"></span></div>
+    </div>
+    <div class="card">
+      <div class="qtopic">${h(q.t)}${q.gen ? " · ✨ new" : ""}</div>
+      <div class="qtext" ${s.lang ? `lang="hi"` : ""}>${h(q.q)}</div>
+      <div class="opts ${long ? "" : "two"}">${q.o.map((o, k) => {
+        let cls = ""; if (shown) { if (k === q.a) cls = "right"; else if (k === ch) cls = "wrong"; } else if (k === ch) cls = "sel";
+        return `<button class="opt ${cls}" data-act="choose" data-v="${k}"><span class="k">${"ABCD"[k]}</span><span>${h(o)}</span></button>`; }).join("")}</div>
+      ${shown ? `<div class="explain"><b>${ch === q.a ? "✅ Correct!" : `❌ Not quite. Correct answer: ${h(q.o[q.a])}`}</b>${h(q.e)}</div>` : ""}
+      <div class="qnav">
+        <button class="btn ghost big" data-act="go" data-v="${Q.i - 1}" ${Q.i ? "" : "disabled"}>← Previous</button>
+        ${last ? `<button class="btn big" data-act="finish">${exam ? "Submit exam" : "See result"}</button>` : `<button class="btn big" data-act="go" data-v="${Q.i + 1}">${exam || shown ? "Next →" : "Skip →"}</button>`}
+      </div>
+    </div>
+    <div class="card"><div class="row between" style="margin-bottom:12px"><b>Questions</b><button class="btn line" data-act="finish">${exam ? "Submit exam" : "End & see result"}</button></div>
+      <div class="palette">${Q.qs.map((x, i) => { let c = ""; if (Q.ans[i] !== null) c = exam ? "done" : (Q.ans[i] === x.a ? "right" : "wrong"); return `<button class="${c} ${i === Q.i ? "cur" : ""}" data-act="go" data-v="${i}">${i + 1}</button>`; }).join("")}</div></div>
+  </div>`;
+}
+function attemptTopics(att) {
+  const m = {}; att.items.forEach(it => { if (it.ch === null) return; const t = m[it.t] = m[it.t] || { a: 0, c: 0 }; t.a++; if (it.ch === it.a) t.c++; });
+  return Object.entries(m).map(([t, v]) => ({ t, ...v, acc: Math.round(100 * v.c / v.a) })).sort((a, b) => a.acc - b.acc);
+}
+function viewResult(att) {
+  const s = subjOf(att.subj), T = attemptTopics(att), weak = T.filter(t => t.acc < 50);
+  const msg = att.pct >= 90 ? "Outstanding! 🌟" : att.pct >= 75 ? "Great work! 🎉" : att.pct >= 50 ? "Good effort — keep going! 💪" : "Let's practise this more. You can do it! 🌱";
+  return `<div class="quiz stack">
+    <div class="card center">
+      <div class="muted">${s.icon} ${h(s.name)} · ${MODE_LABEL[att.mode]} · ${h(att.name)}</div>
+      <div class="score-ring" style="--p:${att.pct};--c:${att.pct >= 75 ? "var(--ok)" : att.pct >= 50 ? "var(--warn)" : "var(--bad)"};margin-top:16px"><div>${att.pct}%</div></div>
+      <h2 style="margin-top:14px">${msg}</h2>
+      ${att.mode === "exam" ? `<p><span class="pill ${att.passed ? "pass" : "fail"}" style="font-size:.95rem">${att.distinction ? "PASSED WITH DISTINCTION" : att.passed ? "PASSED" : "NOT PASSED YET"}</span></p>` : ""}
+      <div class="grid tiles" style="margin-top:12px">
+        <div class="tile"><div class="v" style="color:var(--ok)">${att.right}</div><div class="l">Correct</div></div>
+        <div class="tile"><div class="v" style="color:var(--bad)">${att.wrong}</div><div class="l">Wrong</div></div>
+        <div class="tile"><div class="v">${att.skipped}</div><div class="l">Skipped</div></div>
+        <div class="tile"><div class="v">${fmtTime(att.secs)}</div><div class="l">Time taken</div></div>
+      </div>
+    </div>
+    <div class="card"><h3>Topic-wise result</h3>
+      ${T.length ? T.map(t => `<div class="list-item"><div class="grow"><b>${h(t.t)}</b><div class="bar" style="--c:${t.acc < 50 ? "var(--bad)" : t.acc < 75 ? "var(--warn)" : "var(--ok)"};margin-top:6px"><span style="width:${t.acc}%"></span></div></div><span class="muted">${t.c}/${t.a}</span></div>`).join("") : `<p class="muted">No questions answered.</p>`}
+      ${weak.length ? `<div class="explain"><b>🎯 Coach tip</b>${weak.slice(0, 2).map(t => `<div style="margin-top:6px"><b style="display:inline">${h(t.t)}:</b> ${h(TIPS[t.t] || "Revise this topic and practise more questions.")}</div>`).join("")}</div>` : ""}
+    </div>
+    <div class="row no-print">
+      <button class="btn big" data-act="review">📝 Review answers</button>
+      ${att.passed ? `<button class="btn big" style="background:#b8860b" data-act="cert">🏅 Certificate</button>` : ""}
+      <button class="btn ghost big" data-act="again">🔄 Practise again</button>
+      ${weak.length ? `<button class="btn ghost big" data-act="drill" data-s="${att.subj}" data-t="${h(weak.map(t => t.t).join("|"))}">🎯 Drill weak topics</button>` : ""}
+      <button class="btn ghost big" data-act="home">🏠 Home</button>
+    </div>
+  </div>`;
+}
+function viewReview(att) {
+  const items = att.items.map((it, i) => ({ ...it, n: i + 1 })).filter(it => !S.reviewOnlyWrong || it.ch !== it.a);
+  return `<div class="quiz stack">
+    <div class="row between no-print"><button class="btn ghost" data-act="back-result">← Result</button>
+      <div class="row"><button class="chip ${S.reviewOnlyWrong ? "" : "on"}" data-act="rev-filter" data-v="0">All</button><button class="chip ${S.reviewOnlyWrong ? "on" : ""}" data-act="rev-filter" data-v="1">Only wrong / skipped</button><button class="btn line" data-act="print">🖨 Print</button></div></div>
+    <div class="card">${items.length ? items.map(it => `<div class="review-q"><div class="qtopic">Q${it.n} · ${h(it.t)}</div><div style="font-weight:650;font-size:1.1rem;margin-top:4px">${h(it.q)}</div>
+      <div class="ans">${it.ch === null ? `<span class="w">Skipped</span>` : it.ch === it.a ? `<span class="r">✅ ${h(it.o[it.ch])}</span>` : `<span class="w">❌ Your answer: ${h(it.o[it.ch])}</span>`}${it.ch !== it.a ? ` &nbsp; <span class="r">✔ Correct: ${h(it.o[it.a])}</span>` : ""}</div>
+      <div class="muted small" style="margin-top:4px">💡 ${h(it.e)}</div></div>`).join("") : `<p class="muted">Nothing to show — all correct! 🎉</p>`}</div>
+  </div>`;
+}
+function viewCert(att) {
+  const s = subjOf(att.subj);
+  return `<div class="stack"><div class="row no-print"><button class="btn ghost" data-act="back-result">← Back</button><button class="btn" data-act="print">🖨 Print / Save as PDF</button></div>
+    <div class="cert"><div style="font-size:3rem">🏆</div><div class="kick">Certificate of Achievement</div><h2>Olympiad Practice</h2>
+      <div>This is proudly presented to</div><div class="name">${h(att.name)}</div>
+      <div style="font-size:1.15rem;max-width:640px;margin:0 auto">for successfully completing the <b>Grade ${att.grade} ${h(s.name)}</b> Olympiad mock exam with a score of <b>${att.pct}%</b>${att.distinction ? " — <b>with Distinction</b>" : ""}.</div>
+      <div class="grid3"><div><span>Score</span><b>${att.right} / ${att.total}</b></div><div><span>Date</span><b>${new Date(att.date).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}</b></div><div><span>Certificate ID</span><b>${att.id.toUpperCase().slice(0, 10)}</b></div></div>
+    </div></div>`;
+}
+function viewWeak() {
+  const subj = S.weakSubj, s = subjOf(subj), A = analyse(subj), p = prog(subj);
+  const mistakes = bankFor(subj).filter(q => p.wrong[q.id]).sort((a, b) => p.wrong[b.id].last - p.wrong[a.id].last).slice(0, 8);
+  return `<div class="stack">
+    <div class="row between"><h2 class="section-title">🎯 Weak-area report — ${h(profile().name)}</h2><button class="btn line no-print" data-act="print">🖨 Print report</button></div>
+    <div class="chips no-print">${SUBJECTS.map(x => `<button class="chip ${x.id === subj ? "on" : ""}" data-act="weak-subj" data-v="${x.id}">${x.icon} ${h(x.name)}</button>`).join("")}</div>
+    <div class="grid tiles">
+      <div class="card tile"><div class="v">${A.acc ?? "–"}${A.acc !== null ? "%" : ""}</div><div class="l">${h(s.name)} accuracy</div></div>
+      <div class="card tile"><div class="v" style="color:var(--bad)">${A.weak.length}</div><div class="l">Needs work</div></div>
+      <div class="card tile"><div class="v" style="color:var(--warn)">${A.improving.length}</div><div class="l">Improving</div></div>
+      <div class="card tile"><div class="v" style="color:var(--ok)">${A.strong.length}</div><div class="l">Strong</div></div>
+    </div>
+    <div class="card"><h3>Coach's summary</h3><p style="margin:8px 0 0">${coachSummary(subj, A)}</p>
+      ${A.weak.length + A.improving.length ? `<button class="btn big no-print" style="margin-top:14px" data-act="drill" data-s="${subj}" data-t="${h([...A.weak, ...A.improving].map(r => r.t).join("|"))}">🎯 Start a drill on these topics</button>` : ""}</div>
+    <div class="card"><h3 style="margin-bottom:6px">Topic by topic</h3><p class="muted small" style="margin:0 0 6px">Based on the last 20 answers in each topic. Under 50% = Needs work · 50–74% = Improving · 75%+ = Strong.</p>
+      ${A.rows.map(r => `<div class="topic-row"><div><b>${h(r.t)}</b><div class="muted small">${r.a ? `${r.c}/${r.a} correct overall` : "Not attempted"}</div></div>
+        <div class="bar-wrap"><div class="bar" style="--c:${r.s === "weak" ? "var(--bad)" : r.s === "improving" ? "var(--warn)" : r.s === "strong" ? "var(--ok)" : "var(--muted)"}"><span style="width:${r.acc ?? 0}%"></span></div></div>
+        <div class="row" style="gap:8px;justify-content:flex-end"><span class="pill ${r.s}">${r.acc !== null ? r.acc + "% · " : ""}${r.label}</span><button class="btn ghost no-print" data-act="drill" data-s="${subj}" data-t="${h(r.t)}">Drill</button></div>
+        ${r.s === "weak" || r.s === "improving" ? `<div class="tip">💡 <b>How to coach:</b> ${h(TIPS[r.t] || "Revise the chapter, then practise 10 questions on this topic.")}</div>` : ""}</div>`).join("")}
+    </div>
+    <div class="card"><h3>Recent mistakes to revise</h3>
+      ${mistakes.length ? mistakes.map(q => `<div class="review-q"><div class="qtopic">${h(q.t)} · wrong ${p.wrong[q.id].n}×</div><div style="font-weight:600;margin-top:2px">${h(q.q)}</div><div class="ans"><span class="r">✔ ${h(q.opts[0])}</span></div><div class="muted small">💡 ${h(q.e)}</div></div>`).join("")
+        : `<p class="muted">No outstanding mistakes. A question leaves this list once it is answered correctly.</p>`}
+    </div>
+  </div>`;
+}
+function viewHistory() {
+  const atts = S.data.attempts.filter(a => a.pid === profile().id && (S.histFilter === "all" || a.subj === S.histFilter));
+  return `<div class="stack">
+    <div class="row between"><h2 class="section-title">📊 History — ${h(profile().name)}</h2><button class="btn line" data-act="csv">⬇ Download CSV</button></div>
+    <div class="chips"><button class="chip ${S.histFilter === "all" ? "on" : ""}" data-act="hist" data-v="all">All</button>${SUBJECTS.map(x => `<button class="chip ${S.histFilter === x.id ? "on" : ""}" data-act="hist" data-v="${x.id}">${x.icon} ${h(x.name)}</button>`).join("")}</div>
+    <div class="card">${atts.length ? atts.map(a => { const s = subjOf(a.subj); return `<div class="list-item"><div style="font-size:1.6rem">${s.icon}</div>
+      <div class="grow"><b>${h(s.name)}</b> <span class="muted">· ${MODE_LABEL[a.mode]}</span><div class="muted small">${fmtDate(a.date)} · ${a.right}/${a.total} correct · ${fmtTime(a.secs)}</div></div>
+      <span class="pill ${a.mode === "exam" ? (a.passed ? "pass" : "fail") : a.pct >= 75 ? "strong" : a.pct >= 50 ? "improving" : "weak"}">${a.pct}%${a.mode === "exam" ? (a.distinction ? " · Distinction" : a.passed ? " · Pass" : " · Not passed") : ""}</span>
+      <button class="btn ghost" data-act="view-att" data-v="${a.id}">View</button></div>`; }).join("") : `<p class="muted">No attempts yet.</p>`}</div>
+  </div>`;
+}
+function viewSettings() {
+  const st = S.data.settings, num = (k, l, min, max) => `<div class="field"><label>${l}</label><input type="number" inputmode="numeric" min="${min}" max="${max}" data-set="${k}" value="${st[k]}"></div>`;
+  return `<div class="stack">
+    <div class="card"><h3>👧 Children (profiles)</h3><p class="muted small">Each child has separate progress, weak-area reports and history.</p>
+      ${S.data.profiles.map(p => `<div class="list-item"><div class="grow form-grid" style="grid-template-columns:2fr 1fr"><div class="field"><label>Name</label><input data-prof-name="${h(p.id)}" value="${h(p.name)}"></div>
+        <div class="field"><label>Grade</label><select data-prof-grade="${h(p.id)}">${GRADES.map(g => `<option ${g === p.grade ? "selected" : ""}>${g}</option>`).join("")}</select></div></div>
+        ${p.id === profile().id ? `<span class="pill strong">Active</span>` : `<button class="btn ghost" data-act="use-prof" data-v="${h(p.id)}">Use</button>`}
+        ${S.data.profiles.length > 1 ? `<button class="btn danger" data-act="del-prof" data-v="${h(p.id)}">Delete</button>` : ""}</div>`).join("")}
+      <button class="btn" style="margin-top:10px" data-act="add-prof">+ Add child</button></div>
+    <div class="card"><h3>⚙️ Test settings</h3><div class="form-grid" style="margin-top:12px">
+      ${num("practiceCount", "Practice questions", 5, 50)}${num("examCount", "Mock exam questions", 10, 60)}${num("examMinutes", "Mock exam minutes", 5, 120)}
+      ${num("passPct", "Pass mark %", 30, 100)}${num("distinctionPct", "Distinction %", 50, 100)}
+      <div class="field"><label>Read questions aloud automatically</label><select data-set="autoRead"><option value="false" ${!st.autoRead ? "selected" : ""}>Off</option><option value="true" ${st.autoRead ? "selected" : ""}>On</option></select></div></div></div>
+    <div class="card"><h3>💾 Backup & restore</h3><p class="muted small">Progress is saved only on this device. Make a backup regularly, for example before updating the app file.</p>
+      <div class="row"><button class="btn" data-act="backup">⬇ Download backup</button><button class="btn ghost" data-act="copy-backup">📋 Copy backup text</button>
+        <label class="btn ghost">📂 Restore from file<input type="file" accept=".json,application/json" data-act="restore-file" hidden></label></div>
+      <div class="field" style="margin-top:14px"><label>Or paste backup text here to restore</label><textarea rows="3" id="restoreText" placeholder="Paste backup text…"></textarea></div>
+      <div class="row" style="margin-top:10px"><button class="btn ghost" data-act="restore-text">Restore pasted text</button><button class="btn danger" data-act="reset">Reset ${h(profile().name)}'s progress</button></div></div>
+    <div class="card"><h3>📱 About</h3><p class="muted small" style="margin:6px 0 0">Works fully offline — no internet, no accounts, no ads. Question bank: ${SUBJECTS.map(s => `${h(s.name)} ${bankFor(s.id).length}`).join(" · ")}${Object.keys(GEN).length ? " · plus unlimited auto-generated Math & Reasoning questions" : ""}.</p></div>
+  </div>`;
+}
+
+/* ============================== EXPORT / IMPORT ============================== */
+function download(name, text, type) {
+  const blob = new Blob([text], { type }), url = URL.createObjectURL(blob), a = document.createElement("a");
+  a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+function restore(text) {
+  try { const d = JSON.parse(text); if (!d || !Array.isArray(d.profiles) || !d.settings) throw 0;
+    if (!confirm("Replace ALL progress on this device with this backup?")) return;
+    S.data = d; save(); S.data = loadData(); alert("Backup restored ✅"); render();
+  } catch (e) { alert("That does not look like a valid Olympiad Practice backup."); }
+}
+function csv() {
+  const rows = [["Date", "Child", "Grade", "Subject", "Mode", "Correct", "Wrong", "Skipped", "Total", "Percent", "Result", "Time (s)"]]
+    .concat(S.data.attempts.map(a => [a.date, a.name, a.grade, subjOf(a.subj).name, MODE_LABEL[a.mode], a.right, a.wrong, a.skipped, a.total, a.pct, a.mode === "exam" ? (a.distinction ? "Distinction" : a.passed ? "Pass" : "Not passed") : "", a.secs]));
+  download("olympiad-history.csv", "﻿" + rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n"), "text/csv");
+}
+
+/* ============================== EVENTS ============================== */
+document.addEventListener("click", e => {
+  const el = e.target.closest("[data-act]"); if (!el || el.tagName === "SELECT" || el.tagName === "INPUT") return;
+  const act = el.dataset.act, v = el.dataset.v;
+  switch (act) {
+    case "tab": S.tab = v; S.screen = "tabs"; render(); window.scrollTo(0, 0); break;
+    case "open-subj": S.subj = v; S.topicSel = []; S.tab = "practice"; render(); window.scrollTo(0, 0); break;
+    case "back-subj": S.subj = null; render(); break;
+    case "topic": S.topicSel = S.topicSel.includes(v) ? S.topicSel.filter(t => t !== v) : [...S.topicSel, v]; render(); break;
+    case "topic-all": S.topicSel = []; render(); break;
+    case "start": if (S.pending && !confirm("Starting a new test will discard the unfinished one. Continue?")) return; startQuiz(S.subj, v, v === "practice" || v === "exam" ? S.topicSel : []); break;
+    case "drill": if (S.pending && !confirm("Starting a new test will discard the unfinished one. Continue?")) return; startQuiz(el.dataset.s, "practice", el.dataset.t.split("|")); break;
+    case "weak-open": S.weakSubj = v; S.tab = "weak"; render(); break;
+    case "weak-subj": S.weakSubj = v; render(); break;
+    case "choose": choose(+v); break;
+    case "go": go(+v); break;
+    case "finish": finishQuiz(false); break;
+    case "quit": quitQuiz(); break;
+    case "speak": speakQ(); break;
+    case "resume": resumeQuiz(); break;
+    case "discard": if (confirm("Discard the unfinished test?")) { S.pending = null; try { localStorage.removeItem(ACTIVE_KEY); } catch (x) {} render(); } break;
+    case "review": S.screen = "review"; render(); window.scrollTo(0, 0); break;
+    case "rev-filter": S.reviewOnlyWrong = v === "1"; render(); break;
+    case "back-result": S.screen = "result"; render(); break;
+    case "cert": S.screen = "cert"; render(); window.scrollTo(0, 0); break;
+    case "again": startQuiz(S.result.subj, S.result.mode === "mistakes" ? "practice" : S.result.mode, S.result.topics); break;
+    case "home": S.screen = "tabs"; S.tab = "home"; render(); window.scrollTo(0, 0); break;
+    case "view-att": S.result = S.data.attempts.find(a => a.id === v); S.screen = "result"; render(); window.scrollTo(0, 0); break;
+    case "hist": S.histFilter = v; render(); break;
+    case "print": window.print(); break;
+    case "csv": csv(); break;
+    case "backup": download(`olympiad-backup-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify(S.data), "application/json"); break;
+    case "copy-backup": (navigator.clipboard ? navigator.clipboard.writeText(JSON.stringify(S.data)).then(() => alert("Backup copied. Paste it into Notes or a message to keep it safe.")) : Promise.reject()).catch(() => alert("Copy is not available here — use Download backup.")); break;
+    case "restore-text": restore($("#restoreText").value); break;
+    case "reset": if (confirm(`Erase all progress and history for ${profile().name}? This cannot be undone.`)) { delete S.data.progress[profile().id]; S.data.attempts = S.data.attempts.filter(a => a.pid !== profile().id); save(); render(); } break;
+    case "add-prof": { const n = prompt("Child's name?"); if (n && n.trim()) { const id = uid("p"); S.data.profiles.push({ id, name: n.trim(), grade: 6 }); S.data.activeProfile = id; save(); render(); } break; }
+    case "use-prof": S.data.activeProfile = v; save(); render(); break;
+    case "del-prof": { const p = S.data.profiles.find(x => x.id === v); if (p && confirm(`Delete ${p.name} and all their progress?`)) { S.data.profiles = S.data.profiles.filter(x => x.id !== v); delete S.data.progress[v]; S.data.attempts = S.data.attempts.filter(a => a.pid !== v); if (S.data.activeProfile === v) S.data.activeProfile = S.data.profiles[0].id; save(); render(); } break; }
+  }
+});
+document.addEventListener("change", e => {
+  const el = e.target;
+  if (el.dataset.act === "profile") { S.data.activeProfile = el.value; save(); render(); }
+  else if (el.dataset.set) { const k = el.dataset.set; let val = el.value; if (k === "autoRead") val = val === "true"; else { val = Math.round(+val); if (!(val > 0)) return; } S.data.settings[k] = val; save(); }
+  else if (el.dataset.profName) { const p = S.data.profiles.find(x => x.id === el.dataset.profName); if (p && el.value.trim()) { p.name = el.value.trim(); save(); renderTop(); } }
+  else if (el.dataset.profGrade) { const p = S.data.profiles.find(x => x.id === el.dataset.profGrade); if (p) { p.grade = +el.value; save(); render(); } }
+  else if (el.dataset.act === "restore-file" && el.files[0]) { const r = new FileReader(); r.onload = () => restore(r.result); r.readAsText(el.files[0]); }
+});
+document.addEventListener("keydown", e => {
+  if (S.screen !== "quiz" || /INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
+  const k = "abcd".indexOf(e.key.toLowerCase()); if (k >= 0 && k < S.quiz.qs[S.quiz.i].o.length) choose(k);
+  else if (e.key === "ArrowRight") go(S.quiz.i + 1); else if (e.key === "ArrowLeft") go(S.quiz.i - 1);
+});
+if ("speechSynthesis" in window) speechSynthesis.getVoices();
+if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {}); // only used for the optional website install
+render();
+</script>
+</body>
+</html>
